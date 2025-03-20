@@ -96,8 +96,6 @@ function Register() {
           className="mt-6 bg-white shadow-md rounded-lg p-4 w-full space-y-4 text-bg-MainColor"
           onSubmit={handleSubmit}
         >
-          {error && <p className="text-red-500 text-sm text-center">{error}</p>}
-
           {/* Input Fields */}
           <div className="grid grid-cols-1 gap-4">
             <div>
@@ -212,7 +210,9 @@ function Register() {
             </p>
           </div>
 
-          <div className="flex justify-between mt-6">
+          <div className="flex flex-col justify-between mt-6">
+          <div className="flex flex-row gap-5 justify-end">
+          {error && <p className="text-red-500 text-sm text-center">{error}</p>}
             <button
               type="submit"
               className={`px-6 py-2 rounded-lg font-medium 
@@ -224,6 +224,7 @@ function Register() {
             <button className="bg-gray-500 text-white px-6 py-2 rounded-lg font-medium hover:bg-gray-700" onClick={() => navigate("/")}>
               Back
             </button>
+            </div>
           </div>
         </form>
       </div>

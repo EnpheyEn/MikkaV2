@@ -12,22 +12,13 @@ function ChangeNumber() {
   const [timer, setTimer] = useState(600); // 10 minutes in seconds
   const [timerActive, setTimerActive] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false); // State สำหรับ Modal
+  const [oldPhone, setOldPhone] = useState("");
 
   const images = [
     "/Promotion.jpg",
     "/Promotion1.jpg",
     "/Promotion2.jpg",
   ];
-
-  // Function to generate a random OTP
-  const generateOtp = () => {
-    const otp = Math.floor(100000 + Math.random() * 900000);
-    setGeneratedOtp(otp);
-    setOtpSent(true);
-    setTimer(600);
-    setTimerActive(true);
-    alert(`Fake OTP sent: ${otp}`); // Display OTP for testing purposes
-  };
 
   // Countdown Timer Effect
   useEffect(() => {
@@ -46,6 +37,13 @@ function ChangeNumber() {
     return () => clearInterval(interval);
   }, [timerActive, timer]);
 
+  useEffect(() => {
+    if (otp.length === 6) {
+      verifyOtp();
+    }
+  }, [otp]);
+
+
   // Format time as MM:SS
   const formatTime = (time) => {
     const minutes = Math.floor(time / 60);
@@ -61,6 +59,106 @@ function ChangeNumber() {
       alert("Incorrect OTP. Please try again.");
     }
   };
+
+  const [email, setEmail] = useState(""); // เพิ่ม state สำหรับ email
+
+useEffect(() => {
+  const storedUserData = sessionStorage.getItem("userData");
+  if (storedUserData) {
+    const userData = JSON.parse(storedUserData);
+    console.log("Loaded user data:", userData); // ✅ Debug
+    setOldPhone(userData.tel || "");  
+    setMemberId(userData.c_MB_ID || "");
+    setEmail(userData.email || ""); // ✅ ดึง email จาก session
+  }
+}, []);
+
+const generateOtp = async () => {
+  if (!email) {
+    alert("Email not found. Please log in again.");
+    return;
+  }
+
+  try {
+    // ดึง IP Address ของผู้ใช้
+    let userIP = "0.0.0.0"; // กำหนดค่าเริ่มต้น
+    try {
+      const ipResponse = await fetch("https://api64.ipify.org?format=json");
+      const ipData = await ipResponse.json();
+      userIP = ipData.ip || "0.0.0.0";
+    } catch (error) {
+      console.error("Failed to fetch IP:", error);
+    }
+
+    console.log("Sending data:", { IP: userIP, email, tel: "" });
+
+    const response = await fetch("http://192.168.20.5/mk-member-api/api/Member/send-otp-mail", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        IP: userIP,
+        email: email,  // ✅ ใช้ email จาก session
+        tel: ""        // ส่ง Tel เป็นค่าว่าง
+      })
+    });
+
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.message || "Failed to send OTP!");
+
+    setOtpSent(true);
+    setTimer(600);
+    setTimerActive(true);
+
+    alert("OTP has been sent to your email.");
+  } catch (error) {
+    alert(error.message || "An error occurred while sending OTP.");
+  }
+};
+
+  const verifyOtp = async () => {
+    if (!otp) {
+      alert("Please enter the OTP.");
+      return;
+    }
+
+    try {
+      const response = await fetch("http://192.168.20.5/mk-member-api/api/Member/verify-reset-tel", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          otp: otp,
+          oldPhone: oldPhone,  // เบอร์โทรเดิม (ค่าคงที่หรือดึงจาก state)
+          newPhone: phoneNumber,  // เบอร์โทรใหม่ที่ผู้ใช้กรอก
+          c_MB_ID: memberId  // ส่งค่า c_MB_ID ไปที่ API
+
+        })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) throw new Error(data.message || "OTP verification failed!");
+
+      alert("Phone number updated successfully!");
+      setIsModalOpen(true); // เปิด Modal แจ้งผลสำเร็จ
+    } catch (error) {
+      alert(error.message || "An error occurred while verifying OTP.");
+    }
+  };
+
+
+
+ const [memberId, setMemberId] = useState(""); // เพิ่ม state สำหรับ c_MB_ID
+
+useEffect(() => {
+  const storedUserData = sessionStorage.getItem("userData");
+  if (storedUserData) {
+    const userData = JSON.parse(storedUserData);
+    setOldPhone(userData.tel);  // ดึงค่าเบอร์โทรจาก session
+    setMemberId(userData.c_MB_ID);  // ดึงค่า c_MB_ID จาก session
+  }
+}, []);
+
+
 
   return (
     <div className="bg-gray-100 min-h-screen flex flex-col justify-center items-center p-6">
@@ -79,10 +177,12 @@ function ChangeNumber() {
             </label>
             <input
               type="text"
-              value="0891111112"
+              value={oldPhone || "Loading..."}
               className="w-full border border-gray-300 rounded-lg p-2 bg-white text-black"
               readOnly
             />
+
+
           </div>
 
           <div className="mb-4">
@@ -94,8 +194,15 @@ function ChangeNumber() {
               placeholder="New Phone Number*"
               className="w-full border rounded-lg p-2 bg-white text-gray-700"
               value={phoneNumber}
-              onChange={(e) => setPhoneNumber(e.target.value)}
+              onChange={(e) => {
+                const value = e.target.value.replace(/\D/g, ""); // เอาเฉพาะตัวเลข
+                if (value.length <= 10) {
+                  setPhoneNumber(value);
+                }
+              }}
+              maxLength={10} // จำกัดความยาวสูงสุด
             />
+
           </div>
 
           <button
@@ -131,11 +238,12 @@ function ChangeNumber() {
           <div className="flex justify-between mt-6">
             <button
               className="bg-bg-MainColor text-white px-6 py-2 rounded-lg font-medium hover:bg-red-600"
-              onClick={handleSubmit}
+              onClick={verifyOtp}
               disabled={timer === 0}
             >
               Confirm
             </button>
+
             <button
               className="bg-gray-500 text-white px-6 py-2 rounded-lg font-medium hover:bg-gray-700"
               onClick={() => navigate("/Home")}
@@ -156,7 +264,7 @@ function ChangeNumber() {
               className="bg-bg-MainColor text-white px-6 py-2 rounded-lg font-medium hover:bg-red-600"
               onClick={() => {
                 setIsModalOpen(false);
-                navigate("/Home");
+                navigate("/");
               }}
             >
               OK

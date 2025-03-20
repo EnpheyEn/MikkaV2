@@ -17,6 +17,16 @@ function ResetPassword() {
     confirm: "",
   });
 
+  const userDataString = sessionStorage.getItem("userData");
+  const userData = userDataString ? JSON.parse(userDataString) : null;
+  const c_MB_ID = userData?.c_MB_ID || "Not found"; // ถ้าไม่มี c_MB_ID ให้แสดง "Not found"
+  
+  console.log("userData:", userData);
+  console.log("c_MB_ID:", c_MB_ID);
+  
+
+  const token = sessionStorage.getItem("token");
+
   const [error, setError] = useState("");
 
   const images = ["/Promotion.jpg", "/Promotion1.jpg", "/Promotion2.jpg"];
@@ -32,6 +42,13 @@ function ResetPassword() {
   const handleSubmit = async (e) => {
     e.preventDefault();
   
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
+  
+    if (!passwordRegex.test(passwords.new)) {
+      setError("New password must be at least 8 characters and contain both uppercase and lowercase letters.");
+      return;
+    }
+  
     if (passwords.new !== passwords.confirm) {
       setError("New Password and Confirm Password do not match.");
       return;
@@ -44,17 +61,16 @@ function ResetPassword() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`, // เพิ่ม token ถ้าจำเป็น
+          Authorization: `Bearer ${token}`, // ใช้ token ที่เก็บไว้ใน sessionStorage
         },
         body: JSON.stringify({
-          c_MB_ID: localStorage.getItem("c_MB_ID"), // ดึง c_MB_ID จาก localStorage หรือจาก state
+          c_MB_ID: c_MB_ID, // ส่ง c_MB_ID จาก userData
           oldPassword: passwords.old,
           newPassword: passwords.new,
         }),
       });
   
       const data = await response.json();
-  
       if (!response.ok) throw new Error(data.message || "Failed to update password");
   
       alert("Password updated successfully!");
@@ -64,12 +80,12 @@ function ResetPassword() {
     }
   };
   
+
   return (
     <div className="bg-gray-100 min-h-screen flex flex-col justify-center items-center p-6">
       {/* Header Section */}
       <div className="mt-16 p-3 sm:mt-12 w-full max-w-2xl">
         <ImageSlider images={images} />
-
 
         {/* Title */}
         <div className="flex items-center text-bg-MainColor font-medium justify-center text-lg mt-4">
@@ -78,7 +94,7 @@ function ResetPassword() {
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="bg-white  shadow-md rounded-lg p-6 w-full max-w-xl mt-6">
+        <form onSubmit={handleSubmit} className="bg-white shadow-md rounded-lg p-6 w-full mt-6">
           {[
             { label: "Current Password", name: "old" },
             { label: "New Password", name: "new" },
@@ -117,7 +133,8 @@ function ResetPassword() {
             <button type="submit" className="bg-bg-MainColor text-white px-6 py-2 rounded-lg font-medium hover:bg-red-600">
               Update
             </button>
-            <button className="bg-gray-500 text-white px-6 py-2 rounded-lg font-medium hover:bg-gray-700"
+            <button
+              className="bg-gray-500 text-white px-6 py-2 rounded-lg font-medium hover:bg-gray-700"
               type="button"
               onClick={() => navigate("/Home")}
             >

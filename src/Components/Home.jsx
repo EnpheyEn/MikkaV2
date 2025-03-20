@@ -21,7 +21,7 @@ function Home() {
   const [lastName, setlastName] = useState("");
   const [coins, setCoins] = useState(0);
   const [points, setPoints] = useState();
-  const [data, setData] = useState(null);  // เปลี่ยนให้เป็น null
+ 
 
   // ดึงข้อมูลจาก API
   useEffect(() => {
@@ -80,8 +80,9 @@ function Home() {
           <div className="flex items-center">
             <div className="w-20 h-14">
               <img
-                src={isExclusive ? "/icon.png" : "./Poor_mouse.png"}
+                src={isExclusive ? "./icon.png" : "./Poor_mouse.png"}
                 alt={isExclusive ? "Ex Member" : "Member"}
+                className="w-full h-full"
               />
             </div>
             <p className="text-lg text-black">
@@ -90,8 +91,8 @@ function Home() {
 
           </div>
 
-          <div className="flex items-center mr-32">
-            <div className="w-20 h-10 ">
+          <div className="flex items-center">
+            <div className="w-20 h-14 ">
               <img src="/mk_ui_coin.png" alt="Cups" />
             </div>
             <p className="text-lg mt-6 text-black"> : {coins}</p>

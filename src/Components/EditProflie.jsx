@@ -7,6 +7,7 @@ import thai_amphures from "../Data_Json/thai_amphures.json";
 import thai_provinces from "../Data_Json/thai_provinces.json";
 import thai_tambons from "../Data_Json/thai_tambons.json";
 
+
 function EditProfile() {
   const navigate = useNavigate();
   const images = ["/Promotion.jpg", "/Promotion1.jpg", "/Promotion2.jpg"];
@@ -24,10 +25,10 @@ function EditProfile() {
     email: savedUserData?.email || "",
     address: savedUserData?.address || "",
     idCard: savedUserData?.idCard || "",
-    province: null,
-    district: null,
-    subDistrict: null,
-    postalCode: null,
+    province: savedUserData?.province || "",
+    district: savedUserData?.district || "",
+    subDistrict: savedUserData?.subDistrict || "",
+    postal: savedUserData?.postal || "",
   });
 
 
@@ -38,14 +39,14 @@ function EditProfile() {
       const province = thai_provinces.find(p => p.name_th === savedUserData.province);
       const district = thai_amphures.find(a => a.province_id === province?.id && a.name_th === savedUserData.district);
       const subDistrict = thai_tambons.find(t => t.amphure_id === district?.id && t.name_th === savedUserData.subDistrict);
-  
+
       const newFormData = {
         province: province ? { value: province.id, label: province.name_th } : null,
         district: district ? { value: district.id, label: district.name_th } : null,
         subDistrict: subDistrict ? { value: subDistrict.id, label: subDistrict.name_th } : null,
-        postalCode: subDistrict?.zip_code || ""
+        postal: subDistrict?.zip_code || "" 
       };
-  
+
       if (JSON.stringify(newFormData) !== JSON.stringify(formDataRef.current)) {
         formDataRef.current = newFormData;
         setFormData(prevData => ({
@@ -55,7 +56,7 @@ function EditProfile() {
       }
     }
   }, [savedUserData]);
-  
+
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -68,56 +69,91 @@ function EditProfile() {
         province: selected,
         district: null,
         subDistrict: null,
-        postalCode: ""
+        postal: ""
       });
     } else if (name === "district") {
       setFormData({
         ...formData,
         district: selected,
         subDistrict: null,
-        postalCode: ""
+        postal: ""
       });
     } else if (name === "subDistrict") {
       const foundSubDistrict = thai_tambons.find(t => t.id === selected?.value);
       setFormData({
         ...formData,
         subDistrict: selected,
-        postalCode: foundSubDistrict?.zip_code || ""
+        postal: foundSubDistrict?.zip_code || ""
       });
     } else {
       setFormData({ ...formData, [name]: selected });
     }
   };
-  
 
-  const validateAndSubmit = () => {
-    // ตรวจสอบการกรอกข้อมูล
-    if (!formData.firstName || !formData.lastName || !formData.email || !formData.tel || !formData.idCard || !formData.birthday || !formData.province || !formData.subDistrict || !formData.postalCode || !formData.district || !formData.address) {
+
+  const validateAndSubmit = async () => {
+    // ตรวจสอบข้อมูล
+    if (!formData.firstName || !formData.lastName || !formData.email || !formData.tel || !formData.idCard || !formData.birthday || !formData.province || !formData.subDistrict || !formData.postal || !formData.district || !formData.address) {
       setErrorMessage("Please fill in all required fields.");
       return;
     }
   
-    // ตรวจสอบความยาวของ idCard (ต้องมี 13 ตัว)
     if (formData.idCard.length !== 13) {
       setErrorMessage("ID Card must be 13 digits.");
       return;
     }
   
-    // ตรวจสอบความยาวของ tel (ต้องมี 10 ตัว)
     if (formData.tel.length !== 10) {
       setErrorMessage("Phone number must be 10 digits.");
       return;
     }
   
-    // เคลียร์ข้อความผิดพลาด
     setErrorMessage("");
   
-    // บันทึกข้อมูลลง sessionStorage
-    sessionStorage.setItem("userData", JSON.stringify(formData));
+    const token = sessionStorage.getItem("token");
+    const c_MB_ID = JSON.parse(sessionStorage.getItem("userData"))?.c_MB_ID;
   
-    setIsModalOpen(true);
+    const payload = {
+      c_MB_ID,
+      firstName: formData.firstName,
+      lastName: formData.lastName,
+      tel: formData.tel,
+      birthDay: formData.birthday,
+      email: formData.email,
+      address: formData.address,
+      idCard: formData.idCard,
+      province: formData.province.label,
+      district: formData.district.label,
+      subDistrict: formData.subDistrict.label,
+      postal: formData.postal ? String(formData.postal) : ""
+    };
+  
+    try {
+      const response = await fetch("http://192.168.20.5/mk-member-api/api/Member/edit-profile", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
+      });
+  
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.message || "Failed to update profile");
+  
+      // อัปเดตข้อมูลใน sessionStorage
+      sessionStorage.setItem("userData", JSON.stringify({ ...JSON.parse(sessionStorage.getItem("userData")), ...payload }));
+  
+      alert("Profile updated successfully!");
+  
+      window.location.reload(); // รีเฟรชหน้าใหม่เพื่อโหลดข้อมูลล่าสุด
+    } catch (error) {
+      setErrorMessage(error.message || "An error occurred. Please try again.");
+    }
   };
   
+
+
 
   return (
     <div className="bg-gray-100 min-h-screen flex flex-col items-center text-slate-70 p-6">
@@ -128,17 +164,22 @@ function EditProfile() {
         </div>
 
         <form className="mt-6 space-y-4 bg-white shadow-md rounded-lg p-9 w-full">
-        {errorMessage && <div className="text-bg-MainColor font-medium text-center">{errorMessage}</div>}
+          {errorMessage && (
+            <div className="text-bg-MainColor font-medium text-center">
+              {errorMessage}
+            </div>
+          )}
+
           {/* Input Fields */}
           {[
             { label: "First Name", name: "firstName", type: "text" },
             { label: "Last Name", name: "lastName", type: "text" },
-            { label: "Phone", name: "tel", type: "int", maxLength: 10 },
-            { label: "Birthday", name: "birthday", type: "date" }, // ✅ Birthday จะแสดงถูกต้อง
+            { label: "Phone", name: "tel", type: "int", maxLength: 10, readOnly: true }, // ✅ ป้องกันการแก้ไข
+            { label: "Birthday", name: "birthday", type: "date" },
             { label: "ID Card / Passport No.", name: "idCard", type: "int", maxLength: 13 },
             { label: "Email", name: "email", type: "email" },
             { label: "Address", name: "address", type: "textarea" }
-          ].map(({ label, name, type, maxLength }) => (
+          ].map(({ label, name, type, maxLength, readOnly }) => (
             <div key={name}>
               <label className="block text-sm text-gray-500">{label}</label>
               {type === "textarea" ? (
@@ -154,10 +195,12 @@ function EditProfile() {
                   type={type}
                   name={name}
                   value={formData[name]}
-                  onChange={handleChange}
-                  className="w-full border border-gray-300 rounded-lg p-2 bg-white text-black"
+                  onChange={name === "tel" ? undefined : handleChange} // ❌ ปิด onChange เฉพาะ tel
+                  className={`w-full border border-gray-300 rounded-lg p-2 ${name === "tel" ? "bg-gray-200 text-gray-500 cursor-not-allowed" : "bg-white text-black"
+                    }`}
                   placeholder={label}
                   maxLength={maxLength}
+                  readOnly={readOnly} // ✅ ใช้ readOnly
                 />
               )}
             </div>
@@ -170,7 +213,7 @@ function EditProfile() {
             { label: "Sub District", name: "subDistrict", options: thai_tambons.filter(t => t.amphure_id === formData.district?.value) }
           ].map(({ label, name, options }) => (
             <div key={name}>
-              <label className="block text-sm text-gray-500">{label}</label>
+              <label className="block text-sm ">{label}</label>
               <Select
                 options={options.map(opt => ({ value: opt.id, label: opt.name_th }))}
                 value={formData[name]}
@@ -183,16 +226,38 @@ function EditProfile() {
 
           {/* Postal Code */}
           <div>
-            <label className="block text-sm text-gray-500">Postal Code</label>
-            <input type="text" value={formData.postalCode} readOnly className="w-full border border-gray-300 rounded-lg p-2 bg-white text-black" />
+            <label className="block text-sm">Postal Code</label>
+            <input
+              type="text"
+              name="postal" // ✅ เพิ่ม name ให้ input
+              value={formData.postal}
+              readOnly
+              className="w-full border border-gray-300 rounded-lg p-2 bg-gray-200 text-gray-500 cursor-not-allowed"
+            />
           </div>
 
+
+          {/* Buttons */}
           <div className="flex gap-4 mt-6">
-            <button type="button" onClick={validateAndSubmit} className="w-full bg-bg-MainColor text-white p-2 rounded-lg font-medium hover:bg-rose-700">Update</button>
-            <button type="button" onClick={() => navigate("/Home")} className="w-full bg-gray-500 text-white p-2 rounded-lg font-medium hover:bg-gray-700">Back</button>
+            <button
+              type="button"
+              onClick={validateAndSubmit}
+              className="w-full bg-bg-MainColor text-white p-2 rounded-lg font-medium hover:bg-rose-700"
+            >
+              Update
+            </button>
+            <button
+              type="button"
+              onClick={() => navigate("/Home")}
+              className="w-full bg-gray-500 text-white p-2 rounded-lg font-medium hover:bg-gray-700"
+            >
+              Back
+            </button>
           </div>
         </form>
+
       </div>
+      
     </div>
   );
 }
