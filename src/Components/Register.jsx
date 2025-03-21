@@ -86,7 +86,7 @@ function Register() {
   };
   
   return (
-    <div className="min-h-screen flex flex-col justify-center items-center bg-gray-100 bg-[url('./BGMikka.png')] bg-cover bg-center">
+    <div className="min-h-screen flex flex-col justify-center items-center bg-gray-100 bg-[url('./BGMikka1.png')] bg-cover bg-center">
       <div className="mt-0 p-3 sm:mt-5 w-full max-w-2xl">
         <div className="text-bg-MainColor font-medium text-xl  text-center">
           <h4>Register</h4>
@@ -210,9 +210,9 @@ function Register() {
             </p>
           </div>
 
-          <div className="flex flex-col justify-between mt-6">
-          <div className="flex flex-row gap-5 justify-end">
           {error && <p className="text-red-500 text-sm text-center">{error}</p>}
+          <div className="flex flex-col justify-between">
+          <div className="flex flex-row gap-24 justify-center">
             <button
               type="submit"
               className={`px-6 py-2 rounded-lg font-medium 

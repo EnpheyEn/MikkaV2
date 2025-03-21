@@ -44,7 +44,7 @@ function EditProfile() {
         province: province ? { value: province.id, label: province.name_th } : null,
         district: district ? { value: district.id, label: district.name_th } : null,
         subDistrict: subDistrict ? { value: subDistrict.id, label: subDistrict.name_th } : null,
-        postal: subDistrict?.zip_code || "" 
+        postal: subDistrict?.zip_code || ""
       };
 
       if (JSON.stringify(newFormData) !== JSON.stringify(formDataRef.current)) {
@@ -97,22 +97,22 @@ function EditProfile() {
       setErrorMessage("Please fill in all required fields.");
       return;
     }
-  
+
     if (formData.idCard.length !== 13) {
       setErrorMessage("ID Card must be 13 digits.");
       return;
     }
-  
+
     if (formData.tel.length !== 10) {
       setErrorMessage("Phone number must be 10 digits.");
       return;
     }
-  
+
     setErrorMessage("");
-  
+
     const token = sessionStorage.getItem("token");
     const c_MB_ID = JSON.parse(sessionStorage.getItem("userData"))?.c_MB_ID;
-  
+
     const payload = {
       c_MB_ID,
       firstName: formData.firstName,
@@ -127,7 +127,7 @@ function EditProfile() {
       subDistrict: formData.subDistrict.label,
       postal: formData.postal ? String(formData.postal) : ""
     };
-  
+
     try {
       const response = await fetch("http://192.168.20.5/mk-member-api/api/Member/edit-profile", {
         method: "POST",
@@ -137,21 +137,21 @@ function EditProfile() {
         },
         body: JSON.stringify(payload),
       });
-  
+
       const data = await response.json();
       if (!response.ok) throw new Error(data.message || "Failed to update profile");
-  
+
       // อัปเดตข้อมูลใน sessionStorage
       sessionStorage.setItem("userData", JSON.stringify({ ...JSON.parse(sessionStorage.getItem("userData")), ...payload }));
-  
+
       alert("Profile updated successfully!");
-  
+
       window.location.reload(); // รีเฟรชหน้าใหม่เพื่อโหลดข้อมูลล่าสุด
     } catch (error) {
       setErrorMessage(error.message || "An error occurred. Please try again.");
     }
   };
-  
+
 
 
 
@@ -164,11 +164,6 @@ function EditProfile() {
         </div>
 
         <form className="mt-6 space-y-4 bg-white shadow-md rounded-lg p-9 w-full">
-          {errorMessage && (
-            <div className="text-bg-MainColor font-medium text-center">
-              {errorMessage}
-            </div>
-          )}
 
           {/* Input Fields */}
           {[
@@ -196,7 +191,7 @@ function EditProfile() {
                   name={name}
                   value={formData[name]}
                   onChange={name === "tel" ? undefined : handleChange} // ❌ ปิด onChange เฉพาะ tel
-                  className={`w-full border border-gray-300 rounded-lg p-2 ${name === "tel" ? "bg-gray-200 text-gray-500 cursor-not-allowed" : "bg-white text-black"
+                  className={`w-full border border-gray-300 rounded-lg p-2 ${name === "tel" ? "bg-white text-black cursor-not-allowed" : "bg-white text-black"
                     }`}
                   placeholder={label}
                   maxLength={maxLength}
@@ -232,11 +227,16 @@ function EditProfile() {
               name="postal" // ✅ เพิ่ม name ให้ input
               value={formData.postal}
               readOnly
-              className="w-full border border-gray-300 rounded-lg p-2 bg-gray-200 text-gray-500 cursor-not-allowed"
+              className="w-full border border-gray-300 rounded-lg p-2 bg-white text-black cursor-not-allowed"
             />
           </div>
 
-
+          {errorMessage && (
+            <div className="text-bg-MainColor font-medium text-center">
+              {errorMessage}
+            </div>
+          )}
+          
           {/* Buttons */}
           <div className="flex gap-4 mt-6">
             <button
@@ -257,7 +257,7 @@ function EditProfile() {
         </form>
 
       </div>
-      
+
     </div>
   );
 }
