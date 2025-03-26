@@ -3,15 +3,20 @@
 /* Customize the next/prev navigation arrows */
 .swiper-button-next, .swiper-button-prev {
     color: #D51F39 !important;
+    height: 20px;
+    width: 25px;
   }
   
   /* Customize the pagination dots */
   .swiper-pagination-bullet {
     background-color: #D51F39 !important;
+
   }
   
   /* Customize the active pagination dot */
   .swiper-pagination-bullet-active {
     background-color: #D51F39 !important;
+    top: 60%;
+  
   }
   

@@ -91,7 +91,7 @@ function Login() {
                     </div>
 
                     {/* Contact & Privacy Section */}
-                    <div className="flex flex-col mt-24">
+                    <div className="flex flex-col mt-20">
                         <p className="text-gray-500 text-center mt-6 text-sm">
                             If you have any problem, contact our staff at
                             <a href="mailto:support@cafemikka.com" className="text-blue-600"> support@cafemikka.com</a>

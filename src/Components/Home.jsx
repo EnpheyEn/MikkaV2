@@ -21,7 +21,7 @@ function Home() {
   const [lastName, setlastName] = useState("");
   const [coins, setCoins] = useState(0);
   const [points, setPoints] = useState();
- 
+
 
   // ดึงข้อมูลจาก API
   useEffect(() => {
@@ -60,7 +60,7 @@ function Home() {
   const images = ["/Promotion.jpg", "/Promotion1.jpg", "/Promotion2.jpg"];
 
   return (
-    <div className="bg-white min-h-screen flex flex-col justify-center items-center px-4">
+    <div className="bg-white min-h-screen flex flex-col justify-center items-center px-4 ">
       <div className="w-full max-w-2xl">
         <h2 className="text-bg-MainColor font-medium text-2xl text-center p-2 mt-24">Membership</h2>
 
@@ -77,26 +77,28 @@ function Home() {
             </div>
           </div>
 
-          <div className="flex items-center">
-            <div className="w-20 h-14">
-              <img
-                src={isExclusive ? "./icon.png" : "./Poor_mouse.png"}
-                alt={isExclusive ? "Ex Member" : "Member"}
-                className="w-full h-full"
-              />
+          <div className="grid grid-cols-2 gap-4 items-center">
+            {/* คอลัมน์รูปภาพ */}
+            <div className="flex flex-col items-center gap-4">
+              <div className="w-24 h-24   flex items-center justify-center">
+                <img
+                  src={isExclusive ? "./icon.png" : "./Poor_mouse.png"}
+                  alt={isExclusive ? "Ex Member" : "Member"}
+                  className="w-20 h-20 object-contain"
+                />
+              </div>
+              <div className="w-24 h-24   flex items-center justify-center">
+                <img src="/mk_ui_coin.png" alt="Cups" className="w-20 h-20 object-contain" />
+              </div>
             </div>
-            <p className="text-lg text-black">
-              {firstName && lastName ? `: ${firstName} ${lastName}` : "Guest"}
-            </p>
 
+            {/* คอลัมน์ข้อความ */}
+            <div className="flex flex-col justify-center gap-16">
+              <p className="text-lg text-black">{firstName && lastName ? `: ${firstName} ${lastName}` : "Guest"}</p>
+              <p className="text-lg text-black">: {coins}</p>
+            </div>
           </div>
 
-          <div className="flex items-center">
-            <div className="w-20 h-14 ">
-              <img src="/mk_ui_coin.png" alt="Cups" />
-            </div>
-            <p className="text-lg mt-6 text-black"> : {coins}</p>
-          </div>
         </div>
 
         {/* Exclusive Member Benefits */}

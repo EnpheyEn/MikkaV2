@@ -1,16 +1,25 @@
-import React from "react";
+import React, { useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Autoplay } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
-import './ImageSlider.css';
-
-
-// Custom styles for swiper
-import "./ImageSlider.css"; // We'll add this custom CSS class to style the navigation and pagination
+import "./ImageSlider.css";
 
 const ImageSlider = ({ images }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
+
+  const openModal = (image) => {
+    setSelectedImage(image);
+    setIsOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsOpen(false);
+    setSelectedImage(null);
+  };
+
   return (
     <div className="w-full h-auto">
       <Swiper
@@ -29,13 +38,36 @@ const ImageSlider = ({ images }) => {
         {images.map((image, index) => (
           <SwiperSlide key={index}>
             <img
-              className="w-full max-h-72 object-contain rounded-lg"
+              className="w-full max-h-72 object-contain rounded-lg cursor-pointer"
               src={image}
               alt={`Slide ${index + 1}`}
+              onClick={() => openModal(image)}
             />
           </SwiperSlide>
         ))}
       </Swiper>
+
+      {/* Popup Modal */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50"
+          onClick={closeModal}
+        >
+          <div className="relative">
+            <img
+              src={selectedImage}
+              alt="Full Size"
+              className="max-w-full max-h-[90vh] rounded-lg"
+            />
+            <button
+              onClick={closeModal}
+              className="absolute top-2 right-2 bg-white text-black px-3 py-1 rounded-full text-xl font-bold"
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

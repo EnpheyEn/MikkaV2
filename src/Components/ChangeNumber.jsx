@@ -139,7 +139,7 @@ const generateOtp = async () => {
       if (!response.ok) throw new Error(data.message || "OTP verification failed!");
 
       alert("Phone number updated successfully!");
-      setIsModalOpen(true); // เปิด Modal แจ้งผลสำเร็จ
+      navigate("/"); // เมื่อกด OK ให้ไปหน้า Login
     } catch (error) {
       alert(error.message || "An error occurred while verifying OTP.");
     }
@@ -253,25 +253,6 @@ useEffect(() => {
           </div>
         </div>
       </div>
-
-      {/* Modal */}
-      {isModalOpen && (
-        <div className="absolute inset-0 flex justify-center items-center mt-10 z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm text-center relative">
-            <h2 className="text-xl font-semibold text-bg-MainColor mb-4">OTP Verified!</h2>
-            <p className="text-gray-700 mb-4">Your phone number has been successfully changed.</p>
-            <button
-              className="bg-bg-MainColor text-white px-6 py-2 rounded-lg font-medium hover:bg-red-600"
-              onClick={() => {
-                setIsModalOpen(false);
-                navigate("/");
-              }}
-            >
-              OK
-            </button>
-          </div>
-        </div>
-      )}
 
     </div>
   );
