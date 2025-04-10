@@ -71,7 +71,7 @@ function Home() {
         <div className="text-bg-MainColor flex flex-col items-center gap-4 mt-6">
           <div className="items-center gap-2">
             <div className="indicator">
-              <span className="indicator-item badge badge-primary p-3 text-slate-100">
+              <span className="indicator-item badge badge-error p-3 text-slate-100">
                 {memberType}
               </span>
             </div>

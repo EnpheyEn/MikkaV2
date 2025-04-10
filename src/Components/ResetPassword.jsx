@@ -57,7 +57,7 @@ function ResetPassword() {
     setError(""); // ล้างข้อผิดพลาดก่อนทำงานต่อ
   
     try {
-      const response = await fetch("http://192.168.20.5/mk-member-api/api/Member/change-password", {
+      const response = await fetch(`${window.env.API_BASE_URL}/Member/change-password`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

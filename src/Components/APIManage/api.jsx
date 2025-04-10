@@ -1,13 +1,19 @@
 // src/api/api.js
 import axios from "axios";
+// import { useEffect } from "react";
 
-const API_URL = "http://192.168.20.5/mk-member-api/api/Member/login";
+
 const API_KEY = "pohzof-duFpum-6nosqu"; // 🔑 ใส่ API Key ที่นี่
 
-export const login = async (tel, password) => {
+
+
+
+export const login = async (API_URL,tel, password) => {
+  
+
     try {
         const response = await axios.post(
-            API_URL,
+            API_URL+"Member/login",
             { tel, password },
             {
                 headers: {
@@ -27,3 +33,4 @@ export const login = async (tel, password) => {
         throw error.response ? error.response.data : error.message; // ✅ จัดการข้อผิดพลาด
     }
 };
+

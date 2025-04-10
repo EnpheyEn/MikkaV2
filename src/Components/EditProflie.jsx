@@ -6,13 +6,14 @@ import ImageSlider from "./ImageSlider";
 import thai_amphures from "../Data_Json/thai_amphures.json";
 import thai_provinces from "../Data_Json/thai_provinces.json";
 import thai_tambons from "../Data_Json/thai_tambons.json";
+// import WebConfig from "../config/WebConfig"
 
 
 function EditProfile() {
   const navigate = useNavigate();
   const images = ["/Promotion.jpg", "/Promotion1.jpg", "/Promotion2.jpg"];
   const [errorMessage, setErrorMessage] = useState("");
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  
 
   // ดึงข้อมูลจาก sessionStorage
   const savedUserData = JSON.parse(sessionStorage.getItem("userData"));
@@ -90,6 +91,28 @@ function EditProfile() {
     }
   };
 
+  const [configData, setConfigData] = useState(null);
+
+  useEffect(() => {
+    // โหลด config จากไฟล์ public/config.js
+    fetch('/config.js')
+      .then((response) => response.text())
+      .then((data) => {
+        eval(data); // Run the config.js code
+        setConfigData(window.env); // เก็บข้อมูลที่ได้จาก config.js
+      })
+      .catch((error) => {
+        console.error("Error loading config:", error);
+      });
+  }, []);
+
+  useEffect(() => {
+    if (configData) {
+      // สามารถใช้งาน configData ที่โหลดมาจาก public/config.js
+      console.log(configData);
+    }
+  }, [configData]);
+
 
   const validateAndSubmit = async () => {
     // ตรวจสอบข้อมูล
@@ -129,7 +152,7 @@ function EditProfile() {
     };
 
     try {
-      const response = await fetch("http://192.168.20.5/mk-member-api/api/Member/edit-profile", {
+      const response = await fetch(`${window.env.API_BASE_URL}/Member/edit-profile`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

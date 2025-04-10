@@ -19,6 +19,28 @@ function ForgotPass() {
   const [otpSent, setOtpSent] = useState(false);
   const [timeLeft, setTimeLeft] = useState(0);
 
+  const [configData, setConfigData] = useState(null);
+
+  useEffect(() => {
+    // โหลด config จากไฟล์ public/config.js
+    fetch('/config.js')
+      .then((response) => response.text())
+      .then((data) => {
+        eval(data); // Run the config.js code
+        setConfigData(window.env); // เก็บข้อมูลที่ได้จาก config.js
+      })
+      .catch((error) => {
+        console.error("Error loading config:", error);
+      });
+  }, []);
+
+  useEffect(() => {
+    if (configData) {
+      // สามารถใช้งาน configData ที่โหลดมาจาก public/config.js
+      console.log(configData);
+    }
+  }, [configData]);
+
   const handleConfirm = async () => {
     console.log("Confirm button clicked!");
     
@@ -26,7 +48,7 @@ function ForgotPass() {
   
     try {
       console.log("Validating OTP with API...");
-      const response = await fetch("http://192.168.20.5/mk-member-api/api/Member/verify-reset-password", {
+      const response = await fetch(`${window.env.API_BASE_URL}/Member/verify-reset-password`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -93,7 +115,7 @@ function ForgotPass() {
       const userIP = ipData.ip;
 
       // ส่งคำขอไปที่ API
-      const response = await fetch("http://192.168.20.5/mk-member-api/api/Member/send-otp-mail", {
+      const response = await fetch(`${window.env.API_BASE_URL}/Member/send-otp-mail`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -180,7 +202,7 @@ function ForgotPass() {
           placeholder='Email *'
           className='w-full border border-gray-300 rounded-lg p-2 bg-white text-black'
         />
-        {errors.email && <p className="text-bg-MainColor text-sm">{errors.email}</p>}
+        {errors.email && <p className="text-bg-MainColor text-sm text-center m-2">{errors.email}</p>}
 
         <button
           className='w-full bg-bg-MainColor text-white py-2 rounded mt-4'
@@ -199,7 +221,7 @@ function ForgotPass() {
           placeholder='Code *'
           className='w-full border border-gray-300 rounded-lg p-2 bg-white text-black'
         />
-        {errors.otp && <p className="text-bg-MainColor text-sm">{errors.otp}</p>}
+        {errors.otp && <p className="text-bg-MainColor text-sm  m-2">{errors.otp}</p>}
 
         {otpSent && generatedOTP !== null && (
           <p className="text-bg-MainColor text-sm mt-2 text-center">
@@ -218,7 +240,7 @@ function ForgotPass() {
             className='w-full border border-gray-300 rounded-lg p-2 bg-white text-black'
           />
         </div>
-        {errors.password && <p className="text-bg-MainColor text-sm">{errors.password}</p>}
+       
 
         <label className='block mt-4 mb-2 text-bg-MainColor'>Confirm Password</label>
         <div className='relative mb-4'>
@@ -231,8 +253,8 @@ function ForgotPass() {
             className='w-full border border-gray-300 rounded-lg p-2 bg-white text-black'
           />
         </div>
-        {errors.confirmPassword && <p className="text-bg-MainColor text-sm">{errors.confirmPassword}</p>}
-
+        {errors.confirmPassword && <p className="text-bg-MainColor text-sm text-center m-2">{errors.confirmPassword}</p>}
+        {errors.password && <p className="text-bg-MainColor text-sm text-center m-2">{errors.password}</p>}
         <div className='flex gap-4'>
           <button
             className={`w-full text-white py-2 rounded ${generatedOTP === null ? "bg-gray-400 cursor-not-allowed" : "bg-bg-MainColor"}`}

@@ -3,16 +3,20 @@ import { Phone } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import ImageSlider from "./ImageSlider";
 
+
+
 function ChangeNumber() {
   const navigate = useNavigate();
   const [phoneNumber, setPhoneNumber] = useState("");
   const [otp, setOtp] = useState("");
   const [generatedOtp, setGeneratedOtp] = useState("");
   const [otpSent, setOtpSent] = useState(false);
-  const [timer, setTimer] = useState(600); // 10 minutes in seconds
   const [timerActive, setTimerActive] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false); // State สำหรับ Modal
   const [oldPhone, setOldPhone] = useState("");
+  const [timer, setTimer] = useState(window.env?.OTP_TIMEOUT || 600);
+  const [configData, setConfigData] = useState(null);
+
 
   const images = [
     "/Promotion.jpg",
@@ -43,7 +47,25 @@ function ChangeNumber() {
     }
   }, [otp]);
 
+  useEffect(() => {
+    // โหลด config จากไฟล์ public/config.js
+    fetch('/config.js')
+      .then((response) => response.text())
+      .then((data) => {
+        eval(data); // Run the config.js code
+        setConfigData(window.env); // เก็บข้อมูลที่ได้จาก config.js
+      })
+      .catch((error) => {
+        console.error("Error loading config:", error);
+      });
+  }, []);
 
+  useEffect(() => {
+    if (configData) {
+      // สามารถใช้งาน configData ที่โหลดมาจาก public/config.js
+      console.log(configData);
+    }
+  }, [configData]);
   // Format time as MM:SS
   const formatTime = (time) => {
     const minutes = Math.floor(time / 60);
@@ -73,32 +95,36 @@ useEffect(() => {
   }
 }, []);
 
+useEffect(() => {
+  if (window.env) {
+    // Proceed with your logic here
+    const timeout = window.env.OTP_TIMEOUT || 600;
+    setTimer(timeout);
+  } else {
+    console.log("Config not loaded yet.");
+  }
+}, []);  // Runs only once when the component mounts
+
+
 const generateOtp = async () => {
-  if (!email) {
-    alert("Email not found. Please log in again.");
+  
+  if (!window.env || !window.env.API_BASE_URL) {
+    alert("Configuration is not loaded yet. Please try again later.");
     return;
   }
 
   try {
-    // ดึง IP Address ของผู้ใช้
-    let userIP = "0.0.0.0"; // กำหนดค่าเริ่มต้น
-    try {
-      const ipResponse = await fetch("https://api64.ipify.org?format=json");
-      const ipData = await ipResponse.json();
-      userIP = ipData.ip || "0.0.0.0";
-    } catch (error) {
-      console.error("Failed to fetch IP:", error);
-    }
-
-    console.log("Sending data:", { IP: userIP, email, tel: "" });
-
-    const response = await fetch("http://192.168.20.5/mk-member-api/api/Member/send-otp-mail", {
+    const ipResponse = await fetch("https://api64.ipify.org?format=json");
+    const ipData = await ipResponse.json();
+    const userIP = ipData.ip;
+    const response = await fetch(`${window.env.API_BASE_URL}/Member/send-otp-mail`, { 
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
+        tel: oldPhone,
+        email: "",
+        c_MB_ID: memberId,
         IP: userIP,
-        email: email,  // ✅ ใช้ email จาก session
-        tel: ""        // ส่ง Tel เป็นค่าว่าง
       })
     });
 
@@ -106,44 +132,44 @@ const generateOtp = async () => {
     if (!response.ok) throw new Error(data.message || "Failed to send OTP!");
 
     setOtpSent(true);
-    setTimer(600);
+    setTimer(window.env.OTP_TIMEOUT); // ✅ ใช้ค่าจาก WebConfig
     setTimerActive(true);
 
-    alert("OTP has been sent to your email.");
+    alert("OTP has been sent to your new phone number.");
   } catch (error) {
     alert(error.message || "An error occurred while sending OTP.");
   }
 };
 
-  const verifyOtp = async () => {
-    if (!otp) {
-      alert("Please enter the OTP.");
-      return;
-    }
 
-    try {
-      const response = await fetch("http://192.168.20.5/mk-member-api/api/Member/verify-reset-tel", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          otp: otp,
-          oldPhone: oldPhone,  // เบอร์โทรเดิม (ค่าคงที่หรือดึงจาก state)
-          newPhone: phoneNumber,  // เบอร์โทรใหม่ที่ผู้ใช้กรอก
-          c_MB_ID: memberId  // ส่งค่า c_MB_ID ไปที่ API
+const verifyOtp = async () => {
+  if (!otp) {
+    alert("Please enter the OTP.");
+    return;
+  }
 
-        })
-      });
+  try {
+    const response = await fetch(`${window.env.API_BASE_URL}/Member/verify-reset-tel`, { // ✅ ใช้ WebConfig
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        otp: otp,
+        oldPhone: oldPhone,  // เบอร์โทรเดิม (ค่าคงที่หรือดึงจาก state)
+        newPhone: phoneNumber,  // เบอร์โทรใหม่ที่ผู้ใช้กรอก
+        c_MB_ID: memberId  // ส่งค่า c_MB_ID ไปที่ API
+      })
+    });
 
-      const data = await response.json();
+    const data = await response.json();
 
-      if (!response.ok) throw new Error(data.message || "OTP verification failed!");
+    if (!response.ok) throw new Error(data.message || "OTP verification failed!");
 
-      alert("Phone number updated successfully!");
-      navigate("/"); // เมื่อกด OK ให้ไปหน้า Login
-    } catch (error) {
-      alert(error.message || "An error occurred while verifying OTP.");
-    }
-  };
+    alert("Phone number updated successfully!");
+    navigate("/"); // เมื่อกด OK ให้ไปหน้า Login
+  } catch (error) {
+    alert(error.message || "An error occurred while verifying OTP.");
+  }
+};
 
 
 

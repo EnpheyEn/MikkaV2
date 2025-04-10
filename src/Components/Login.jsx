@@ -1,18 +1,36 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { login } from "../Components/APIManage/api"
+// import { useEffect } from "react";
+
 
 function Login() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
-    
+    const [loading, setLoading] = useState(false); // เพิ่ม state สำหรับการโหลด
+     const [configData, setConfigData] = useState(null);
+    useEffect(() => {
+        // โหลด config จากไฟล์ public/config.js
+        fetch('/config.js')
+          .then((response) => response.text())
+          .then((data) => {
+            eval(data); // Run the config.js code
+            setConfigData(window.env); // เก็บข้อมูลที่ได้จาก config.js
+            console.log("Noey Log : "+ window.env.API_BASE_URL);
+          })
+          .catch((error) => {
+            console.error("Error loading config:", error);
+          });
+      }, []);
     const navigate = useNavigate();
 
     const handleLogin = async () => {
+        setLoading(true); // เริ่มการโหลด
         try {
-            const response = await login(username, password);
+           
+            const response = await login(window.env.API_BASE_URL,username, password);
             console.log("API Response:", response);
 
             if (response.isSuccess) {
@@ -24,12 +42,14 @@ function Login() {
             }
         } catch (error) {
             setErrorMessage(error.message || "Invalid Username or Password");
+        } finally {
+            setLoading(false); // ปิดการโหลดเมื่อเสร็จ
         }
     };
 
     return (
         <div className="flex flex-col md:flex-row min-h-screen text-slate-800">
-            {/* Left Section */}
+       
             <div className="md:w-1/2 w-full flex flex-col justify-center items-center text-white p-8 bg-bg-MainColor">
                 <img src="./MK_Ci.png" alt="Mikka Logo" className="mb-6 w-32 md:w-50" />
 
@@ -78,10 +98,15 @@ function Login() {
 
                     <div className="w-full flex justify-center">
                         <button
-                            className="w-60 text-white font-bold rounded-md py-2 mt-6 hover:bg-red-700 bg-bg-MainColor"
+                            className="w-60 text-white font-bold rounded-md py-2 mt-6 bg-bg-MainColor flex justify-center items-center"
                             onClick={handleLogin}
+                            disabled={loading} // ปิดปุ่มขณะการโหลด
                         >
-                            Login
+                            {loading ? (
+                                <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-white border-solid"></div>
+                            ) : (
+                                "Login"
+                            )}
                         </button>
                     </div>
 

@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState,useEffect, use } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+
+
 
 function Register() {
   const navigate = useNavigate();
@@ -18,6 +19,27 @@ function Register() {
 
   const [error, setError] = useState("");
   const [showModal, setShowModal] = useState(false); // ✅ เพิ่ม state สำหรับ Modal
+  const [configData, setConfigData] = useState('')
+ useEffect(() => {
+    // โหลด config จากไฟล์ public/config.js
+    fetch('/config.js')
+      .then((response) => response.text())
+      .then((data) => {
+        eval(data); // Run the config.js code
+        setConfigData(window.env); // เก็บข้อมูลที่ได้จาก config.js
+      })
+      .catch((error) => {
+        console.error("Error loading config:", error);
+      });
+  }, []);
+
+  useEffect(() => {
+    if (configData) {
+      // สามารถใช้งาน configData ที่โหลดมาจาก public/config.js
+      console.log(configData);
+    }
+  }, [configData]);
+
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -37,29 +59,28 @@ function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
   
-    if (Object.values(formData).some((val) => val === "" || val === false)) {
-      setError("กรุณากรอกข้อมูลให้ครบทุกช่อง");
-      return;
-    }
-  
-    if (formData.password !== formData.confirmPassword) {
-      setError("รหัสผ่านไม่ตรงกัน");
-      return;
-    }
-  
-    // ✅ ตรวจสอบความยาวและเงื่อนไขรหัสผ่าน
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
+  
     if (!passwordRegex.test(formData.password)) {
       setError("รหัสผ่านต้องมีอย่างน้อย 8 ตัว และมีทั้งตัวพิมพ์เล็กและตัวพิมพ์ใหญ่");
       return;
     }
   
+    if (formData.password !== formData.confirmPassword) {
+      setError("รหัสผ่านและยืนยันรหัสผ่านไม่ตรงกัน");
+      return;
+    }
+  
+    setError("");
+  
     try {
-      const response = await axios.post(
-        "http://192.168.20.5/mk-member-api/api/Member/register",
-        {
+      const response = await fetch(`${window.env.API_BASE_URL}/Member/register`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
           firstName: formData.firstName,
           lastName: formData.lastName,
           tel: formData.tel,
@@ -67,21 +88,19 @@ function Register() {
           idCard: formData.idCard,
           email: formData.email,
           password: formData.password,
-        }
-      );
+        }),
+      });
   
-      if (response.status === 200) {
+      const data = await response.json();
+  
+      if (response.ok) {
         setShowModal(true);
       } else {
-        setError(response.data.message || "เกิดข้อผิดพลาดในการสมัครสมาชิก");
+        setError(data.message || "เกิดข้อผิดพลาดในการสมัครสมาชิก");
       }
     } catch (error) {
       console.error("Error registering:", error);
-      if (error.response && error.response.data && error.response.data.message) {
-        setError(error.response.data.message);
-      } else {
-        setError("ไม่สามารถสมัครสมาชิกได้ กรุณาลองใหม่");
-      }
+      setError(error.message || "ไม่สามารถสมัครสมาชิกได้ กรุณาลองใหม่");
     }
   };
   
@@ -210,7 +229,7 @@ function Register() {
             </p>
           </div>
 
-          {error && <p className="text-red-500 text-sm text-center">{error}</p>}
+          {error && <p className="text-red-500 text-sm text-center item">{error}</p>}
           <div className="flex flex-col justify-between">
           <div className="flex flex-row gap-24 justify-center">
             <button

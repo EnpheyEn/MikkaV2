@@ -13,7 +13,7 @@ function AppContent() {
     const location = useLocation(); 
     const hideHeader = ["/", "/Register", "/Forgot_Pass"].includes(location.pathname); 
     // ซ่อน Header ในหน้า Login, Register, Forgot_Pass
-
+    
     return (
       <div className="bg-white">
         {!hideHeader && <Header />} {/* แสดง Header ถ้าไม่ใช่หน้า Login, Register, Forgot_Pass */}
