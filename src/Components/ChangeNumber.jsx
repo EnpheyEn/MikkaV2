@@ -14,15 +14,9 @@ function ChangeNumber() {
   const [timerActive, setTimerActive] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false); // State สำหรับ Modal
   const [oldPhone, setOldPhone] = useState("");
-  const [timer, setTimer] = useState(window.env?.OTP_TIMEOUT || 600);
+  const [timer, setTimer] = useState(window.env?.OTP_TIMEOUT );
   const [configData, setConfigData] = useState(null);
-
-
-  const images = [
-    "/Promotion.jpg",
-    "/Promotion1.jpg",
-    "/Promotion2.jpg",
-  ];
+  const [loading, setLoading] = useState(false); // เพิ่ม state สำหรับการโหลด
 
   // Countdown Timer Effect
   useEffect(() => {
@@ -36,6 +30,7 @@ function ChangeNumber() {
       alert("OTP expired!");
       setTimerActive(false);
       setOtpSent(false);
+      setLoading(false);
     }
 
     return () => clearInterval(interval);
@@ -84,112 +79,112 @@ function ChangeNumber() {
 
   const [email, setEmail] = useState(""); // เพิ่ม state สำหรับ email
 
-useEffect(() => {
-  const storedUserData = sessionStorage.getItem("userData");
-  if (storedUserData) {
-    const userData = JSON.parse(storedUserData);
-    console.log("Loaded user data:", userData); // ✅ Debug
-    setOldPhone(userData.tel || "");  
-    setMemberId(userData.c_MB_ID || "");
-    setEmail(userData.email || ""); // ✅ ดึง email จาก session
-  }
-}, []);
+  useEffect(() => {
+    const storedUserData = sessionStorage.getItem("userData");
+    if (storedUserData) {
+      const userData = JSON.parse(storedUserData);
+      console.log("Loaded user data:", userData); // ✅ Debug
+      setOldPhone(userData.tel || "");
+      setMemberId(userData.c_MB_ID || "");
+      setEmail(userData.email || ""); // ✅ ดึง email จาก session
+    }
+  }, []);
 
-useEffect(() => {
-  if (window.env) {
-    // Proceed with your logic here
-    const timeout = window.env.OTP_TIMEOUT || 600;
-    setTimer(timeout);
-  } else {
-    console.log("Config not loaded yet.");
-  }
-}, []);  // Runs only once when the component mounts
-
-
-const generateOtp = async () => {
-  
-  if (!window.env || !window.env.API_BASE_URL) {
-    alert("Configuration is not loaded yet. Please try again later.");
-    return;
-  }
-
-  try {
-    const ipResponse = await fetch("https://api64.ipify.org?format=json");
-    const ipData = await ipResponse.json();
-    const userIP = ipData.ip;
-    const response = await fetch(`${window.env.API_BASE_URL}/Member/send-otp-mail`, { 
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        tel: oldPhone,
-        email: "",
-        c_MB_ID: memberId,
-        IP: userIP,
-      })
-    });
-
-    const data = await response.json();
-    if (!response.ok) throw new Error(data.message || "Failed to send OTP!");
-
-    setOtpSent(true);
-    setTimer(window.env.OTP_TIMEOUT); // ✅ ใช้ค่าจาก WebConfig
-    setTimerActive(true);
-
-    alert("OTP has been sent to your new phone number.");
-  } catch (error) {
-    alert(error.message || "An error occurred while sending OTP.");
-  }
-};
+  useEffect(() => {
+    if (window.env) {
+      // Proceed with your logic here
+      const timeout = window.env.OTP_TIMEOUT ;
+      setTimer(timeout);
+    } else {
+      console.log("Config not loaded yet.");
+    }
+  }, []);  // Runs only once when the component mounts
 
 
-const verifyOtp = async () => {
-  if (!otp) {
-    alert("Please enter the OTP.");
-    return;
-  }
+  const generateOtp = async () => {
+    setLoading(true); // เริ่มการโหลด
+    if (!window.env || !window.env.API_BASE_URL) {
+      alert("Configuration is not loaded yet. Please try again later.");
+      return;
+    }
 
-  try {
-    const response = await fetch(`${window.env.API_BASE_URL}/Member/verify-reset-tel`, { // ✅ ใช้ WebConfig
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        otp: otp,
-        oldPhone: oldPhone,  // เบอร์โทรเดิม (ค่าคงที่หรือดึงจาก state)
-        newPhone: phoneNumber,  // เบอร์โทรใหม่ที่ผู้ใช้กรอก
-        c_MB_ID: memberId  // ส่งค่า c_MB_ID ไปที่ API
-      })
-    });
+    try {
+      const ipResponse = await fetch("https://api64.ipify.org?format=json");
+      const ipData = await ipResponse.json();
+      const userIP = ipData.ip;
+      const response = await fetch(`${window.env.API_BASE_URL}/Member/send-otp-mail`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          tel: oldPhone,
+          email: "",
+          c_MB_ID: memberId,
+          IP: userIP,
+        })
+      });
 
-    const data = await response.json();
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.message || "Failed to send OTP!");
 
-    if (!response.ok) throw new Error(data.message || "OTP verification failed!");
+      setOtpSent(true);
+      setTimer(window.env.OTP_TIMEOUT); // ✅ ใช้ค่าจาก WebConfig
+      setTimerActive(true);
 
-    alert("Phone number updated successfully!");
-    navigate("/"); // เมื่อกด OK ให้ไปหน้า Login
-  } catch (error) {
-    alert(error.message || "An error occurred while verifying OTP.");
-  }
-};
+      alert("OTP has been sent to your new phone number.");
+    } catch (error) {
+      alert(error.message || "An error occurred while sending OTP.");
+    }
+  };
+
+
+  const verifyOtp = async () => {
+    if (!otp) {
+      alert("Please enter the OTP.");
+      return;
+    }
+
+    try {
+      const response = await fetch(`${window.env.API_BASE_URL}/Member/verify-reset-tel`, { // ✅ ใช้ WebConfig
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          otp: otp,
+          oldPhone: oldPhone,  // เบอร์โทรเดิม (ค่าคงที่หรือดึงจาก state)
+          newPhone: phoneNumber,  // เบอร์โทรใหม่ที่ผู้ใช้กรอก
+          c_MB_ID: memberId  // ส่งค่า c_MB_ID ไปที่ API
+        })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) throw new Error(data.message || "OTP verification failed!");
+
+      alert("Phone number updated successfully!");
+      navigate("/"); // เมื่อกด OK ให้ไปหน้า Login
+    } catch (error) {
+      alert(error.message || "An error occurred while verifying OTP.");
+    }
+  };
 
 
 
- const [memberId, setMemberId] = useState(""); // เพิ่ม state สำหรับ c_MB_ID
+  const [memberId, setMemberId] = useState(""); // เพิ่ม state สำหรับ c_MB_ID
 
-useEffect(() => {
-  const storedUserData = sessionStorage.getItem("userData");
-  if (storedUserData) {
-    const userData = JSON.parse(storedUserData);
-    setOldPhone(userData.tel);  // ดึงค่าเบอร์โทรจาก session
-    setMemberId(userData.c_MB_ID);  // ดึงค่า c_MB_ID จาก session
-  }
-}, []);
+  useEffect(() => {
+    const storedUserData = sessionStorage.getItem("userData");
+    if (storedUserData) {
+      const userData = JSON.parse(storedUserData);
+      setOldPhone(userData.tel);  // ดึงค่าเบอร์โทรจาก session
+      setMemberId(userData.c_MB_ID);  // ดึงค่า c_MB_ID จาก session
+    }
+  }, []);
 
 
 
   return (
     <div className="bg-gray-100 min-h-screen flex flex-col justify-center items-center p-6">
       <div className="mt-16 p-3 sm:mt-12 w-full max-w-2xl">
-        <ImageSlider images={images} />
+        <ImageSlider/>
 
         <div className="flex items-center text-bg-MainColor font-medium justify-center text-lg mt-4">
           <h4>Change Number</h4>
@@ -232,11 +227,25 @@ useEffect(() => {
           </div>
 
           <button
-            className="w-full bg-bg-MainColor text-white px-6 py-2 rounded-lg font-medium hover:bg-red-600 mb-4"
+            className={`w-full text-white px-6 py-2 rounded-lg font-medium mb-4 ${(loading || timerActive || !phoneNumber)
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-bg-MainColor hover:bg-red-600"
+              }`}
             onClick={generateOtp}
+            disabled={loading || timerActive || !phoneNumber} // ✅ เช็กว่ามีเบอร์หรือยัง
           >
-            Request OTP
+            {loading ? (
+              <div className="flex justify-center items-center">
+                <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-white mr-2"></div>
+              </div>
+            ) : timerActive ? (
+              `Wait ${formatTime(timer)}`
+            ) : (
+              "Request OTP"
+            )}
           </button>
+
+
 
           {otpSent && (
             <div className="mb-4">

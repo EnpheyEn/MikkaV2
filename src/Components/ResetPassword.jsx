@@ -85,7 +85,7 @@ function ResetPassword() {
     <div className="bg-gray-100 min-h-screen flex flex-col justify-center items-center p-6">
       {/* Header Section */}
       <div className="mt-16 p-3 sm:mt-12 w-full max-w-2xl">
-        <ImageSlider images={images} />
+        <ImageSlider/>
 
         {/* Title */}
         <div className="flex items-center text-bg-MainColor font-medium justify-center text-lg mt-4">

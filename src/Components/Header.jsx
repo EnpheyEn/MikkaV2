@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Menu, X, LogOut, User, Phone, KeyRound, Home } from "lucide-react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
   const menuRef = useRef(null);
 
   // ตรวจจับการคลิกนอกเมนูเพื่อปิด
@@ -23,6 +24,13 @@ function Header() {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [menuOpen]);
+
+  // 🚪 ฟังก์ชัน Logout
+  const handleLogout = () => {
+    sessionStorage.removeItem("isLoggedIn");   // ลบ flag login
+    sessionStorage.removeItem("userData");     // ลบข้อมูล user ถ้ามีเก็บไว้
+    navigate("/");                             // กลับไปหน้า Login
+  };
 
   return (
     <div className="bg-bg-MainColor text-white flex items-center justify-between p-4 fixed top-0 left-0 w-full z-50">
@@ -71,11 +79,10 @@ function Header() {
         </Link>
       </div>
 
-      {/* ปุ่มล็อกเอาต์ */}
-      <Link to="/" onClick={() => sessionStorage.removeItem("userData")}>
+      {/* 🔴 ปุ่ม Logout */}
+      <button onClick={handleLogout} className="ml-4">
         <LogOut size={24} />
-      </Link>
-
+      </button>
     </div>
   );
 }

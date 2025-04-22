@@ -11,9 +11,11 @@ import thai_tambons from "../Data_Json/thai_tambons.json";
 
 function EditProfile() {
   const navigate = useNavigate();
-  const images = ["/Promotion.jpg", "/Promotion1.jpg", "/Promotion2.jpg"];
+ 
   const [errorMessage, setErrorMessage] = useState("");
-  
+  const [loading, setLoading] = useState(false);
+
+
 
   // ดึงข้อมูลจาก sessionStorage
   const savedUserData = JSON.parse(sessionStorage.getItem("userData"));
@@ -115,7 +117,6 @@ function EditProfile() {
 
 
   const validateAndSubmit = async () => {
-    // ตรวจสอบข้อมูล
     if (!formData.firstName || !formData.lastName || !formData.email || !formData.tel || !formData.idCard || !formData.birthday || !formData.province || !formData.subDistrict || !formData.postal || !formData.district || !formData.address) {
       setErrorMessage("Please fill in all required fields.");
       return;
@@ -132,6 +133,7 @@ function EditProfile() {
     }
 
     setErrorMessage("");
+    setLoading(true); // 👈 เริ่มโหลด
 
     const token = sessionStorage.getItem("token");
     const c_MB_ID = JSON.parse(sessionStorage.getItem("userData"))?.c_MB_ID;
@@ -164,24 +166,33 @@ function EditProfile() {
       const data = await response.json();
       if (!response.ok) throw new Error(data.message || "Failed to update profile");
 
-      // อัปเดตข้อมูลใน sessionStorage
       sessionStorage.setItem("userData", JSON.stringify({ ...JSON.parse(sessionStorage.getItem("userData")), ...payload }));
-
       alert("Profile updated successfully!");
-
-      window.location.reload(); // รีเฟรชหน้าใหม่เพื่อโหลดข้อมูลล่าสุด
+      window.location.reload();
     } catch (error) {
       setErrorMessage(error.message || "An error occurred. Please try again.");
+    } finally {
+      setLoading(false); // 👈 หยุดโหลด
     }
   };
 
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen bg-white">
+        <div className="flex justify-center items-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-bg-MainColor mr-2"></div>
+        </div>
+      </div>
+    );
+  }
 
 
 
   return (
     <div className="bg-gray-100 min-h-screen flex flex-col items-center text-slate-70 p-6">
       <div className="mt-16 p-3 sm:mt-12 w-full max-w-2xl">
-        <ImageSlider images={images} />
+        <ImageSlider/>
         <div className="flex items-center font-medium justify-center text-lg mt-4 text-bg-MainColor">
           <h4>Edit Profile</h4> <Pencil className="ml-2" />
         </div>
@@ -259,7 +270,7 @@ function EditProfile() {
               {errorMessage}
             </div>
           )}
-          
+
           {/* Buttons */}
           <div className="flex gap-4 mt-6">
             <button

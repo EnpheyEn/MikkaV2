@@ -18,6 +18,7 @@ function ForgotPass() {
   const [generatedOTP, setGeneratedOTP] = useState(null);
   const [otpSent, setOtpSent] = useState(false);
   const [timeLeft, setTimeLeft] = useState(0);
+  const [loading, setLoading] = useState(false); // เพิ่ม state สำหรับการโหลด
 
   const [configData, setConfigData] = useState(null);
 
@@ -42,12 +43,10 @@ function ForgotPass() {
   }, [configData]);
 
   const handleConfirm = async () => {
-    console.log("Confirm button clicked!");
-    
     if (!validateFormInputs()) return;
-  
+
+    setLoading(true);
     try {
-      console.log("Validating OTP with API...");
       const response = await fetch(`${window.env.API_BASE_URL}/Member/verify-reset-password`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -58,32 +57,34 @@ function ForgotPass() {
           tel: ""
         }),
       });
-  
+
       const data = await response.json();
-      console.log("API Response:", data);
-  
+
       if (!response.ok) {
         throw new Error(data.message || "Invalid OTP! Please try again.");
       }
-  
+
       alert("Password successfully changed!");
       navigate("/");
     } catch (error) {
       console.error("Error verifying OTP:", error);
       setErrors({ otp: error.message || "OTP verification failed!" });
+    } finally {
+      setLoading(false);
     }
   };
-  
+
+
   const validateFormInputs = () => {
     let newErrors = {};
-  
+
     if (!formData.email.includes('@')) {
       newErrors.email = "Invalid email format!";
     }
     if (!formData.otp) {
       newErrors.otp = "Please enter OTP!";
     }
-  
+
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
     if (!passwordRegex.test(formData.newPassword)) {
       newErrors.password = "Password must be at least 8 characters and include uppercase & lowercase letters!";
@@ -91,11 +92,11 @@ function ForgotPass() {
     if (formData.newPassword !== formData.confirmPassword) {
       newErrors.confirmPassword = "Passwords do not match!";
     }
-  
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
-  
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -108,21 +109,20 @@ function ForgotPass() {
       return;
     }
 
+    setLoading(true); // เริ่มโหลด
     try {
-      // ดึง IP ของผู้ใช้
       const ipResponse = await fetch("https://api64.ipify.org?format=json");
       const ipData = await ipResponse.json();
       const userIP = ipData.ip;
 
-      // ส่งคำขอไปที่ API
       const response = await fetch(`${window.env.API_BASE_URL}/Member/send-otp-mail`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           IP: userIP,
-          Email: formData.email, // ใช้ค่าที่ผู้ใช้กรอก
+          Email: formData.email,
           Tel: "",
-          c_MB_ID: null,  // สามารถเอาออกได้หาก API ไม่ต้องการ
+          c_MB_ID: null,
         }),
       });
 
@@ -130,17 +130,18 @@ function ForgotPass() {
 
       if (!response.ok) throw new Error(data.message || "Failed to send OTP!");
 
-      // บันทึก OTP ที่ได้รับจาก API
       setGeneratedOTP(data.otp);
-      console.log("OTP : ",data.otp)
       setOtpSent(true);
       setTimeLeft(600);
 
       alert("OTP has been sent to your email.");
     } catch (error) {
       alert(error.message || "An error occurred while sending OTP.");
+    } finally {
+      setLoading(false); // หยุดโหลด
     }
   };
+
 
   useEffect(() => {
     if (timeLeft > 0) {
@@ -155,7 +156,7 @@ function ForgotPass() {
 
   const validateForm = () => {
     let newErrors = {};
-    
+
     if (!formData.email.includes('@')) {
       newErrors.email = "Invalid email format!";
     }
@@ -166,21 +167,21 @@ function ForgotPass() {
     } else if (formData.otp !== generatedOTP) {
       newErrors.otp = "Incorrect Code!";
     }
-  
+
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
     if (!passwordRegex.test(formData.newPassword)) {
       newErrors.password = "Password must be at least 8 characters and include uppercase & lowercase letters!";
     }
-  
+
     if (formData.newPassword !== formData.confirmPassword) {
       newErrors.confirmPassword = "Passwords do not match!";
     }
-  
+
     setErrors(newErrors);
     console.log("Validation Errors:", newErrors);
     return Object.keys(newErrors).length === 0;
   };
-  
+
 
   const formatTime = (seconds) => {
     const minutes = Math.floor(seconds / 60);
@@ -205,11 +206,13 @@ function ForgotPass() {
         {errors.email && <p className="text-bg-MainColor text-sm text-center m-2">{errors.email}</p>}
 
         <button
-          className='w-full bg-bg-MainColor text-white py-2 rounded mt-4'
+          className='w-full bg-bg-MainColor text-white py-2 rounded mt-4 disabled:opacity-50'
           onClick={sendOtp}
+          disabled={loading}
         >
-          {otpSent ? "Resend Code" : "Send Code"}
+          {loading ? "Sending..." : (otpSent ? "Resend Code" : "Send Code")}
         </button>
+
 
         <label className='block mt-4 mb-2 text-bg-MainColor'>OTP</label>
         <input
@@ -240,7 +243,7 @@ function ForgotPass() {
             className='w-full border border-gray-300 rounded-lg p-2 bg-white text-black'
           />
         </div>
-       
+
 
         <label className='block mt-4 mb-2 text-bg-MainColor'>Confirm Password</label>
         <div className='relative mb-4'>

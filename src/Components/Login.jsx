@@ -36,6 +36,7 @@ function Login() {
             if (response.isSuccess) {
                 console.log("Saved User Data:", response.data);
                 sessionStorage.setItem("userData", JSON.stringify(response.data));
+                sessionStorage.setItem("isLoggedIn", "true");
                 navigate("/Home"); // ✅ เข้า Home ถ้า Login สำเร็จ
             } else {
                 setErrorMessage(response.message || "Invalid Username or Password");

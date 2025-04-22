@@ -6,9 +6,12 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "./ImageSlider.css";
 
-const ImageSlider = ({ images }) => {
+const ImageSlider = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
+
+  // ถ้ามี 5 รูปชื่อ 1.jpg ถึง 5.jpg
+const img = Array.from({ length: 3 }, (_, i) => `/Images/${i + 1}.jpg`);
 
   const openModal = (image) => {
     setSelectedImage(image);
@@ -19,6 +22,16 @@ const ImageSlider = ({ images }) => {
     setIsOpen(false);
     setSelectedImage(null);
   };
+
+  // function ImageSlider({ images }) {
+  //   return (
+  //     <div className="image-slider">
+  //       {images.map((src, index) => (
+  //         <img key={index} src={src} alt={`Slide ${index + 1}`} />
+  //       ))}
+  //     </div>
+  //   );
+  // }
 
   return (
     <div className="w-full h-auto">
@@ -35,7 +48,7 @@ const ImageSlider = ({ images }) => {
           1024: { slidesPerView: 1 },
         }}
       >
-        {images.map((image, index) => (
+        {img.map((image, index) => (
           <SwiperSlide key={index}>
             <img
               className="w-full max-h-72 object-contain rounded-lg cursor-pointer"

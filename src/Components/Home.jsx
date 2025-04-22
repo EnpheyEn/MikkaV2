@@ -56,8 +56,12 @@ function Home() {
     fetchUserData();
   }, []);
 
-  // Image Slider images
-  const images = ["/Promotion.jpg", "/Promotion1.jpg", "/Promotion2.jpg"];
+  // Define the number of images you have
+  const numberOfImages = [];
+
+  // Generate an array of image paths
+  const images = Array.from({ length: numberOfImages }, (_, index) => `./Images/${index + 1}.jpg`);
+
 
   return (
     <div className="bg-white min-h-screen flex flex-col justify-center items-center px-4 ">
@@ -65,7 +69,7 @@ function Home() {
         <h2 className="text-bg-MainColor font-medium text-2xl text-center p-2 mt-24">Membership</h2>
 
         {/* Image Slider */}
-        <ImageSlider images={images} />
+        <ImageSlider/>
 
         {/* Member Info */}
         <div className="text-bg-MainColor flex flex-col items-center gap-4 mt-6">
