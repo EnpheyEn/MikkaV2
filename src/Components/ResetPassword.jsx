@@ -96,9 +96,9 @@ function ResetPassword() {
         {/* Form */}
         <form onSubmit={handleSubmit} className="bg-white shadow-md rounded-lg p-6 w-full mt-6">
           {[
-            { label: "Current Password", name: "old" },
-            { label: "New Password", name: "new" },
-            { label: "Confirm Password", name: "confirm" },
+            { label: "Current Password *", name: "old" },
+            { label: "New Password *", name: "new" },
+            { label: "Confirm Password *", name: "confirm" },
           ].map((field) => (
             <div key={field.name} className="mb-4">
               <label className="block text-sm font-medium text-bg-MainColor mb-1">
@@ -110,7 +110,7 @@ function ResetPassword() {
                   name={field.name}
                   value={passwords[field.name]}
                   onChange={handleChange}
-                  placeholder={`${field.label} *`}
+                  placeholder={`${field.label} `}
                   className="w-full border rounded-lg p-2 pr-10 bg-white text-gray-700"
                   required
                 />

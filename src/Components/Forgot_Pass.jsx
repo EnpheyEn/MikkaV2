@@ -194,7 +194,7 @@ function ForgotPass() {
       <div className='bg-white p-8 rounded-lg shadow-md w-full max-w-md mt-10'>
         <h2 className='text-xl font-medium text-center mb-6 text-bg-MainColor'>Forget Password</h2>
 
-        <label className='mb-2'>Email</label>
+        <label className='mb-2 text-bg-MainColor'>Email *</label>
         <input
           type='email'
           name="email"
@@ -214,7 +214,7 @@ function ForgotPass() {
         </button>
 
 
-        <label className='block mt-4 mb-2 text-bg-MainColor'>OTP</label>
+        <label className='block mt-4 mb-2 text-bg-MainColor'>OTP *</label>
         <input
           type='text'
           name="otp"
@@ -232,7 +232,7 @@ function ForgotPass() {
           </p>
         )}
 
-        <label className='block mt-4 mb-2 text-bg-MainColor'>New Password</label>
+        <label className='block mt-4 mb-2 text-bg-MainColor'>New Password *</label>
         <div className='relative mb-4'>
           <input
             type={showPassword ? 'text' : 'password'}
@@ -245,7 +245,7 @@ function ForgotPass() {
         </div>
 
 
-        <label className='block mt-4 mb-2 text-bg-MainColor'>Confirm Password</label>
+        <label className='block mt-4 mb-2 text-bg-MainColor'>Confirm Password *</label>
         <div className='relative mb-4'>
           <input
             type={showConfirmPassword ? 'text' : 'password'}

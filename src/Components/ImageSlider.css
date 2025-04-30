@@ -1,22 +1,22 @@
-/* ImageSlider.css */
+/* จัดให้ pagination อยู่นอกภาพด้านล่าง */
+.swiper-pagination {
+  bottom: -20px !important; /* เลื่อนออกจากภาพลงล่าง */
+  position: relative; /* หรือ absolute ถ้าใช้ร่วมกับ container มีตำแหน่ง */
+  
+}
 
+/* ปรับจุดกลมให้สีและขนาดดูดี */
+.swiper-pagination-bullet {
+  background-color: #D51F39 !important;
+  margin: 0 4px;
+}
+
+.swiper-pagination-bullet-active {
+  background-color: #D51F39 !important;
+}
 /* Customize the next/prev navigation arrows */
 .swiper-button-next, .swiper-button-prev {
-    color: #D51F39 !important;
-    height: 20px;
-    width: 25px;
-  }
-  
-  /* Customize the pagination dots */
-  .swiper-pagination-bullet {
-    background-color: #D51F39 !important;
-
-  }
-  
-  /* Customize the active pagination dot */
-  .swiper-pagination-bullet-active {
-    background-color: #D51F39 !important;
-    top: 60%;
-  
-  }
-  
+  color: #D51F39 !important;
+  height: 20px;
+  width: 25px;
+}

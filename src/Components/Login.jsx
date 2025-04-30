@@ -63,13 +63,14 @@ function Login() {
             <div className="md:w-1/2 w-full bg-white flex flex-col justify-center items-center p-6 md:p-10">
                 <div className="w-full max-w-md">
                     <label className="text-bg-MainColor block font-bold text-lg mb-1 mt-2">
-                        Username (Phone)
+                        Phone
                     </label>
                     <input
                         type="text"
                         className="w-full border border-gray-300 rounded-md p-2 bg-white focus:outline-none focus:ring-2 focus:ring-red-400"
                         placeholder="Phone*"
                         value={username}
+                        maxLength={10}
                         onChange={(e) => setUsername(e.target.value)}
                     />
 

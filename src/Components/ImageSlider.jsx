@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Autoplay } from "swiper/modules";
 import "swiper/css";
@@ -7,14 +7,33 @@ import "swiper/css/pagination";
 import "./ImageSlider.css";
 
 const ImageSlider = () => {
+  const [images, setImages] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
 
-  // ถ้ามี 5 รูปชื่อ 1.jpg ถึง 5.jpg
-const img = Array.from({ length: 3 }, (_, i) => `/Images/${i + 1}.jpg`);
+  useEffect(() => {
+    const fetchImages = async () => {
+      try {
+        const response = await fetch("https://apikaegoal.mmm2007.net/api/Member/imageFeed", {
+          method: "POST"});
+        const data = await response.json();
 
-  const openModal = (image) => {
-    setSelectedImage(image);
+        if (Array.isArray(data)) {
+          // เช็คว่ามีฟิลด์ url และ alt หรือไม่
+          setImages(data);
+        } else {
+          console.error("Invalid response format:", data);
+        }
+      } catch (error) {
+        console.error("Error fetching images:", error);
+      }
+    };
+
+    fetchImages();
+  }, []);
+
+  const openModal = (imageUrl) => {
+    setSelectedImage(imageUrl);
     setIsOpen(true);
   };
 
@@ -22,16 +41,6 @@ const img = Array.from({ length: 3 }, (_, i) => `/Images/${i + 1}.jpg`);
     setIsOpen(false);
     setSelectedImage(null);
   };
-
-  // function ImageSlider({ images }) {
-  //   return (
-  //     <div className="image-slider">
-  //       {images.map((src, index) => (
-  //         <img key={index} src={src} alt={`Slide ${index + 1}`} />
-  //       ))}
-  //     </div>
-  //   );
-  // }
 
   return (
     <div className="w-full h-auto">
@@ -48,19 +57,18 @@ const img = Array.from({ length: 3 }, (_, i) => `/Images/${i + 1}.jpg`);
           1024: { slidesPerView: 1 },
         }}
       >
-        {img.map((image, index) => (
+        {images.map((image, index) => (
           <SwiperSlide key={index}>
             <img
               className="w-full max-h-72 object-contain rounded-lg cursor-pointer"
-              src={image}
-              alt={`Slide ${index + 1}`}
-              onClick={() => openModal(image)}
+              src={image.url} // ใช้ url จาก API
+              alt={image.alt || `Slide ${index + 1}`} // ใช้ alt ถ้ามี
+              onClick={() => openModal(image.url)}
             />
           </SwiperSlide>
         ))}
       </Swiper>
 
-      {/* Popup Modal */}
       {isOpen && (
         <div
           className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50"

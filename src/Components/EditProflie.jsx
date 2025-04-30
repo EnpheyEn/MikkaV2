@@ -201,16 +201,16 @@ function EditProfile() {
 
           {/* Input Fields */}
           {[
-            { label: "First Name", name: "firstName", type: "text" },
-            { label: "Last Name", name: "lastName", type: "text" },
-            { label: "Phone", name: "tel", type: "int", maxLength: 10, readOnly: true }, // ✅ ป้องกันการแก้ไข
-            { label: "Birthday", name: "birthday", type: "date" },
-            { label: "ID Card / Passport No.", name: "idCard", type: "int", maxLength: 13 },
-            { label: "Email", name: "email", type: "email" },
-            { label: "Address", name: "address", type: "textarea" }
+            { label: "First Name *", name: "firstName", type: "text" },
+            { label: "Last Name *", name: "lastName", type: "text" },
+            { label: "Phone *", name: "tel", type: "int", maxLength: 10, readOnly: true }, // ✅ ป้องกันการแก้ไข
+            { label: "Birthday *", name: "birthday", type: "date" },
+            { label: "ID Card / Passport No. *", name: "idCard", type: "int", maxLength: 13 },
+            { label: "Email *", name: "email", type: "email" },
+            { label: "Address *", name: "address", type: "textarea" }
           ].map(({ label, name, type, maxLength, readOnly }) => (
             <div key={name}>
-              <label className="block text-sm text-gray-500">{label}</label>
+              <label className="block text-lg text-bg-MainColor">{label}</label>
               {type === "textarea" ? (
                 <textarea
                   name={name}
@@ -237,12 +237,12 @@ function EditProfile() {
 
           {/* Province, District, Sub-District */}
           {[
-            { label: "Province", name: "province", options: thai_provinces },
-            { label: "District", name: "district", options: thai_amphures.filter(d => d.province_id === formData.province?.value) },
-            { label: "Sub District", name: "subDistrict", options: thai_tambons.filter(t => t.amphure_id === formData.district?.value) }
+            { label: "Province *", name: "province", options: thai_provinces },
+            { label: "District *", name: "district", options: thai_amphures.filter(d => d.province_id === formData.province?.value) },
+            { label: "Sub District *", name: "subDistrict", options: thai_tambons.filter(t => t.amphure_id === formData.district?.value) }
           ].map(({ label, name, options }) => (
             <div key={name}>
-              <label className="block text-sm ">{label}</label>
+              <label className="block text-lg text-bg-MainColor ">{label}</label>
               <Select
                 options={options.map(opt => ({ value: opt.id, label: opt.name_th }))}
                 value={formData[name]}
@@ -255,7 +255,7 @@ function EditProfile() {
 
           {/* Postal Code */}
           <div>
-            <label className="block text-sm">Postal Code</label>
+            <label className="block text-lg text-bg-MainColor">Postal Code *</label>
             <input
               type="text"
               name="postal" // ✅ เพิ่ม name ให้ input

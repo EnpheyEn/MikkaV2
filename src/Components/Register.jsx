@@ -118,7 +118,7 @@ function Register() {
           {/* Input Fields */}
           <div className="grid grid-cols-1 gap-4">
             <div>
-              <label className="block text-sm text-gray-500 mb-1">First Name</label>
+              <label className="block text-lg text-bg-MainColor mb-1">First Name *</label>
               <input
                 type="text"
                 name="firstName"
@@ -129,7 +129,7 @@ function Register() {
               />
             </div>
             <div>
-              <label className="block text-sm text-gray-500 mb-1">Last Name</label>
+              <label className="block text-lg text-bg-MainColor mb-1">Last Name *</label>
               <input
                 type="text"
                 name="lastName"
@@ -143,7 +143,7 @@ function Register() {
 
           <div className="grid grid-cols-2 gap-4 mt-4">
             <div>
-              <label className="block text-sm text-gray-500 mb-1">Phone</label>
+              <label className="block text-lg text-bg-MainColor mb-1">Phone *</label>
               <input
                 type="tel"
                 name="tel"
@@ -154,7 +154,7 @@ function Register() {
               />
             </div>
             <div>
-              <label className="block text-sm text-gray-500 mb-1">Birthday</label>
+              <label className="block text-lg text-bg-MainColor mb-1">Birthday *</label>
               <input
                 type="date"
                 name="birthday"
@@ -167,7 +167,7 @@ function Register() {
 
           <div className="grid grid-cols-1 gap-4 mt-4">
             <div>
-              <label className="block text-sm text-gray-500 mb-1">ID Card / Passport No.</label>
+              <label className="block text-lg text-bg-MainColor mb-1">ID Card / Passport No. *</label>
               <input
                 type="tel"
                 name="idCard"
@@ -178,7 +178,7 @@ function Register() {
               />
             </div>
             <div>
-              <label className="block text-sm text-gray-500 mb-1">Email address</label>
+              <label className="block text-lg text-bg-MainColor mb-1">Email address *</label>
               <input
                 type="email"
                 name="email"
@@ -192,7 +192,7 @@ function Register() {
 
           <div className="grid grid-cols-1 gap-4 mt-4">
             <div>
-              <label className="block text-sm text-gray-500 mb-1">Password</label>
+              <label className="block text-lg text-bg-MainColor mb-1">Password *</label>
               <input
                 type="password"
                 name="password"
@@ -203,7 +203,7 @@ function Register() {
               />
             </div>
             <div>
-              <label className="block text-sm text-gray-500 mb-1">Confirm Password</label>
+              <label className="block text-lg text-bg-MainColor mb-1">Confirm Password *</label>
               <input
                 type="password"
                 name="confirmPassword"

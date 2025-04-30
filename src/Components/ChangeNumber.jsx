@@ -194,7 +194,7 @@ function ChangeNumber() {
         <div className="bg-white shadow-md rounded-lg p-6 w-full mt-6">
           <div className="mb-4">
             <label className="block text-sm font-medium text-bg-MainColor mb-1">
-              Register Phone Number (เบอร์โทร)
+              Register Phone Number (เบอร์โทร) *
             </label>
             <input
               type="text"
@@ -208,7 +208,7 @@ function ChangeNumber() {
 
           <div className="mb-4">
             <label className="block text-sm font-medium text-bg-MainColor mb-1">
-              New Phone Number (เบอร์โทรใหม่)
+              New Phone Number (เบอร์โทรใหม่) *
             </label>
             <input
               type="text"
