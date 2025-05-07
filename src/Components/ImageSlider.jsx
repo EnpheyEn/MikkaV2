@@ -60,7 +60,7 @@ const ImageSlider = () => {
         {images.map((image, index) => (
           <SwiperSlide key={index}>
             <img
-              className="w-full max-h-72 object-contain rounded-lg cursor-pointer"
+              className="w-full max-h-72 object-contain  cursor-pointer"
               src={image.url} // ใช้ url จาก API
               alt={image.alt || `Slide ${index + 1}`} // ใช้ alt ถ้ามี
               onClick={() => openModal(image.url)}

@@ -193,8 +193,10 @@ function ForgotPass() {
     <div className="min-h-screen flex flex-col items-center p-6 bg-[url('/BGMikka1.png')] bg-cover bg-center">
       <div className='bg-white p-8 rounded-lg shadow-md w-full max-w-md mt-10'>
         <h2 className='text-xl font-medium text-center mb-6 text-bg-MainColor'>Forget Password</h2>
-
+        <div className="flex">
         <label className='mb-2 text-bg-MainColor'>Email *</label>
+        <label className="block text-xs text-slate-500 mt-2">(อีเมล์)</label>
+        </div>
         <input
           type='email'
           name="email"
@@ -231,8 +233,10 @@ function ForgotPass() {
             Code expires in {formatTime(timeLeft)}
           </p>
         )}
-
+        <div className="flex">
         <label className='block mt-4 mb-2 text-bg-MainColor'>New Password *</label>
+        <label className="block text-xs text-slate-500 mt-6">(รหัสผ่านใหม่)</label>
+        </div>
         <div className='relative mb-4'>
           <input
             type={showPassword ? 'text' : 'password'}
@@ -244,8 +248,10 @@ function ForgotPass() {
           />
         </div>
 
-
+        <div className="flex">
         <label className='block mt-4 mb-2 text-bg-MainColor'>Confirm Password *</label>
+        <label className="block text-xs text-slate-500 mt-6">(ยืนยันรหัสผ่าน)</label>
+        </div>
         <div className='relative mb-4'>
           <input
             type={showConfirmPassword ? 'text' : 'password'}

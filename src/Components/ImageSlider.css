@@ -1,7 +1,7 @@
 /* จัดให้ pagination อยู่นอกภาพด้านล่าง */
 .swiper-pagination {
   bottom: -20px !important; /* เลื่อนออกจากภาพลงล่าง */
-  position: relative; /* หรือ absolute ถ้าใช้ร่วมกับ container มีตำแหน่ง */
+  /* position: relative; หรือ absolute ถ้าใช้ร่วมกับ container มีตำแหน่ง */
   
 }
 
@@ -16,7 +16,7 @@
 }
 /* Customize the next/prev navigation arrows */
 .swiper-button-next, .swiper-button-prev {
-  color: #D51F39 !important;
+  color: #ffffffb0 !important;
   height: 20px;
   width: 25px;
 }

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Menu, X, LogOut, User, Phone, KeyRound, Home } from "lucide-react";
+import { Menu, X, LogOut, User, Phone, KeyRound, Home, Coins } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
 function Header() {
@@ -41,7 +41,7 @@ function Header() {
 
       {/* โลโก้กลาง */}
       <Link to="/Home">
-        <img src="./MK_Ci.png" className="h-10 w-24 m-1" alt="Mikko Coffee Roasters" />
+        <img src="./MK_Ci.png" className="h-10  m-1" alt="Mikko Coffee Roasters" />
       </Link>
 
       {/* เมนู (รวม Desktop + Mobile) */}
@@ -77,6 +77,14 @@ function Header() {
         >
           <Phone size={18} /> Change Phone Number
         </Link>
+        <Link
+          to="/CoinHistory"
+          className={`relative flex items-center gap-2 px-4 py-2 hover:bg-gray-200 md:hover:bg-transparent ${location.pathname === "/CoinHistory" ? "after:content-[''] after:absolute after:left-0 after:bottom-0 after:w-full after:h-[2px] after:bg-white" : ""
+            }`}
+        >
+          <Coins size={18} /> Coin History
+        </Link>
+
       </div>
 
       {/* 🔴 ปุ่ม Logout */}

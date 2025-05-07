@@ -63,7 +63,7 @@ function Login() {
             <div className="md:w-1/2 w-full bg-white flex flex-col justify-center items-center p-6 md:p-10">
                 <div className="w-full max-w-md">
                     <label className="text-bg-MainColor block font-bold text-lg mb-1 mt-2">
-                        Phone
+                        Phone (เบอร์โทร)
                     </label>
                     <input
                         type="text"
@@ -74,7 +74,7 @@ function Login() {
                         onChange={(e) => setUsername(e.target.value)}
                     />
 
-                    <label className="block text-bg-MainColor font-bold text-lg mb-1 mt-2">Password</label>
+                    <label className="block text-bg-MainColor font-bold text-lg mb-1 mt-2">Password (รหัสผ่าน)</label>
                     <div className="relative w-full">
                         <input
                             type={showPassword ? "text" : "password"}
@@ -115,6 +115,10 @@ function Login() {
                     <div className="flex justify-between mt-4 text-bg-MainColor font-semibold text-sm">
                         <a href="/Register">Register</a>
                         <a href="/Forgot_Pass">Forgot Password</a>
+                    </div>
+                    <div className="flex justify-between text-gray-500 text-xs">
+                        <a href="/Register">(ลงทะเบียน)</a>
+                        <a href="/Forgot_Pass">(ลืมรหัสผ่าน)</a>
                     </div>
 
                     {/* Contact & Privacy Section */}

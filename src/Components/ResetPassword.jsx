@@ -82,10 +82,12 @@ function ResetPassword() {
   
 
   return (
-    <div className="bg-gray-100 min-h-screen flex flex-col justify-center items-center p-6">
+    <div className="bg-gray-100 min-h-screen flex justify-center">
       {/* Header Section */}
-      <div className="mt-16 p-3 sm:mt-12 w-full max-w-2xl">
+      <div className="mt-20 w-full max-w-2xl">
+      <div className="w-full max-w-full overflow-hidden ">
         <ImageSlider/>
+        </div>
 
         {/* Title */}
         <div className="flex items-center text-bg-MainColor font-medium justify-center text-lg mt-4">
@@ -96,14 +98,15 @@ function ResetPassword() {
         {/* Form */}
         <form onSubmit={handleSubmit} className="bg-white shadow-md rounded-lg p-6 w-full mt-6">
           {[
-            { label: "Current Password *", name: "old" },
-            { label: "New Password *", name: "new" },
-            { label: "Confirm Password *", name: "confirm" },
+            { label: "Current Password *",labelTH:"(รหัสผ่านปัจจุบัน)", name: "old" },
+            { label: "New Password *",labelTH:"(รหัสผ่านใหม่)", name: "new" },
+            { label: "Confirm Password *",labelTH:"(ยืนยันรหัสผ่าน)", name: "confirm" },
           ].map((field) => (
             <div key={field.name} className="mb-4">
-              <label className="block text-sm font-medium text-bg-MainColor mb-1">
-                {field.label}
-              </label>
+              <div className="flex">
+              <label className="block text-sm text-bg-MainColor">{field.label}</label>
+              <label className="block text-xs text-gray-500 mt-1">{field.labelTH}</label>
+              </div>
               <div className="relative">
                 <input
                   type={showPassword[field.name] ? "text" : "password"}

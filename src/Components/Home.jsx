@@ -47,7 +47,7 @@ function Home() {
         setIsExclusive(user.isExclusive);
         setPointsExpiry(dayjs(user.pointsExpiry).format("DD/MM/YYYY"));
         setLastUpdateTime(dayjs(user.lastUpdateTime).format("DD/MM/YYYY HH:mm"));
-        setMemberType(user.isExclusive ? "Exclusive" : "Member");
+        setMemberType(user.isExclusive ? "Exclusive Member" : "Member");
       } catch (error) {
         console.error("Error fetching data: ", error);
       }
@@ -64,26 +64,26 @@ function Home() {
 
 
   return (
-    <div className="bg-white min-h-screen flex flex-col justify-center items-center px-4 ">
+    <div className="bg-white min-h-screen flex flex-col justify-center items-center  ">
       <div className="w-full max-w-2xl">
-        <h2 className="text-bg-MainColor font-medium text-2xl text-center p-2 mt-24">Membership</h2>
-
+      
+        <div className="w-full max-w-full overflow-hidden mt-16">
         {/* Image Slider */}
         <ImageSlider/>
-
+        </div>
         {/* Member Info */}
         <div className="text-bg-MainColor flex flex-col items-center gap-4 mt-6">
           <div className="items-center gap-2">
             <div className="indicator">
-              <span className="indicator-item badge badge-error p-3 text-slate-100">
+              <span className="p-3 text-white bg-[#D51F39] rounded-lg">
                 {memberType}
               </span>
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4 items-center">
+          <div className="grid grid-cols-2 gap-2 items-center">
             {/* คอลัมน์รูปภาพ */}
-            <div className="flex flex-col items-center gap-4">
+            <div className="flex flex-col items-center gap-2">
               <div className="w-24 h-24   flex items-center justify-center">
                 <img
                   src={isExclusive ? "./icon.png" : "./Poor_mouse.png"}
@@ -99,18 +99,21 @@ function Home() {
             {/* คอลัมน์ข้อความ */}
             <div className="flex flex-col justify-center gap-16">
               <p className="text-lg text-black">{firstName && lastName ? `: ${firstName} ${lastName}` : "Guest"}</p>
-              <p className="text-lg text-black">: {coins}</p>
+              <p className="text-lg text-black">: {coins} /30 </p>
             </div>
+            
           </div>
-
+          <div className="justify-center text-center">
+              <p ><b>Point Expiration:</b> {pointsExpiry}</p>
+            </div>
         </div>
 
         {/* Exclusive Member Benefits */}
         {isExclusive && (
-          <StyledComponent>
-            <div className="bg-bg-MainColor text-white p-4 text-start rounded-lg mt-16 max-w-md mx-auto text-sm ">
+          <StyledComponent className="m-4">
+            <div className="bg-bg-MainColor text-white p-4 text-start rounded-lg mt-10 max-w-md mx-auto text-sm ">
               <p>
-                🎉 <b>Exclusive Member Benefits</b>: <br />
+                🎉 <b className="font-bold text-lg">Exclusive Member Benefits</b>: <br />
                 1. รับส่วนลด 10 บาท ต่อแก้ว ตลอดจนถึง 31 ธันวาคม 2568 <br />
                 Enjoy a 10 Baht discount on every drink until 31 December 2025. <br />
                 2. รับเครื่องดื่มฟรี! 1 แก้ว ในเดือนเกิด <br />
@@ -120,13 +123,7 @@ function Home() {
           </StyledComponent>
         )}
 
-        {/* Points Expiry and Last Update */}
-        <StyledComponent>
-          <div className="mt-6 text-center text-sm text-gray-600 p-3">
-            <p><b>Last Update:</b> {lastUpdateTime}</p>
-            <p><b>Points Expiry:</b> {pointsExpiry}</p>
-          </div>
-        </StyledComponent>
+        
 
       </div>
     </div>

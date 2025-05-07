@@ -7,6 +7,7 @@ import ResetPassword from "./Components/ResetPassword";
 import ChangeNumber from "./Components/ChangeNumber";
 import Register from "./Components/Register";
 import Forgot_Pass from "./Components/Forgot_Pass";
+import CoinHistory from "./Components/CoinHistory";
 
 // import HomePoor from "./Components/HomePoor";
 
@@ -42,6 +43,7 @@ function AppContent() {
         <Route path="/EditProflie" element={<ProtectedRoute><EditProflie /></ProtectedRoute>} />
         <Route path="/ResetPassword" element={<ProtectedRoute><ResetPassword /></ProtectedRoute>} />
         <Route path="/ChangeNumber" element={<ProtectedRoute><ChangeNumber /></ProtectedRoute>} />
+        <Route path="/CoinHistory" element={<ProtectedRoute><CoinHistory /></ProtectedRoute>} />
         <Route
           path="*"
           element={

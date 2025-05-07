@@ -118,7 +118,10 @@ function Register() {
           {/* Input Fields */}
           <div className="grid grid-cols-1 gap-4">
             <div>
-              <label className="block text-lg text-bg-MainColor mb-1">First Name *</label>
+              <div className="flex">
+              <label className="block text-lg text-bg-MainColor ">First Name *</label>
+              <label className="block text-xs text-slate-500 mt-2">(ชื่อจริง)</label>
+              </div>
               <input
                 type="text"
                 name="firstName"
@@ -129,7 +132,10 @@ function Register() {
               />
             </div>
             <div>
+            <div className="flex">
               <label className="block text-lg text-bg-MainColor mb-1">Last Name *</label>
+              <label className="block text-xs text-slate-500 mt-2">(นามสกุล)</label>
+              </div>
               <input
                 type="text"
                 name="lastName"
@@ -143,7 +149,10 @@ function Register() {
 
           <div className="grid grid-cols-2 gap-4 mt-4">
             <div>
+            <div className="flex">
               <label className="block text-lg text-bg-MainColor mb-1">Phone *</label>
+              <label className="block text-xs text-slate-500 mt-2">(เบอร์โทร)</label>
+              </div>
               <input
                 type="tel"
                 name="tel"
@@ -154,7 +163,10 @@ function Register() {
               />
             </div>
             <div>
+            <div className="flex">
               <label className="block text-lg text-bg-MainColor mb-1">Birthday *</label>
+              <label className="block text-xs text-slate-500 mt-2">(วันเกิด)</label>
+              </div>
               <input
                 type="date"
                 name="birthday"
@@ -167,7 +179,10 @@ function Register() {
 
           <div className="grid grid-cols-1 gap-4 mt-4">
             <div>
-              <label className="block text-lg text-bg-MainColor mb-1">ID Card / Passport No. *</label>
+            <div className="flex">
+              <label className="block text-l text-bg-MainColor mb-1">ID Card / Passport No. *</label>
+              <label className="block text-xs text-slate-500 mt-2">(บัตรประชาชน/หนังสือเดินทาง)</label>
+              </div>
               <input
                 type="tel"
                 name="idCard"
@@ -178,7 +193,10 @@ function Register() {
               />
             </div>
             <div>
+            <div className="flex">
               <label className="block text-lg text-bg-MainColor mb-1">Email address *</label>
+              <label className="block text-xs text-slate-500 mt-2">(อีเมล์)</label>
+              </div>
               <input
                 type="email"
                 name="email"
@@ -192,7 +210,10 @@ function Register() {
 
           <div className="grid grid-cols-1 gap-4 mt-4">
             <div>
+            <div className="flex">
               <label className="block text-lg text-bg-MainColor mb-1">Password *</label>
+              <label className="block text-xs text-slate-500 mt-2">(รหัสผ่าน)</label>
+              </div>
               <input
                 type="password"
                 name="password"
@@ -203,7 +224,10 @@ function Register() {
               />
             </div>
             <div>
+            <div className="flex">
               <label className="block text-lg text-bg-MainColor mb-1">Confirm Password *</label>
+              <label className="block text-xs text-slate-500 mt-2">(ยืนยันรหัสผ่าน)</label>
+              </div>
               <input
                 type="password"
                 name="confirmPassword"

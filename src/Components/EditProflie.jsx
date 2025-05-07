@@ -190,27 +190,32 @@ function EditProfile() {
 
 
   return (
-    <div className="bg-gray-100 min-h-screen flex flex-col items-center text-slate-70 p-6">
-      <div className="mt-16 p-3 sm:mt-12 w-full max-w-2xl">
+    <div className="bg-gray-100 min-h-screen flex flex-col items-center text-slate-70 ">
+      <div className="mt-20   w-full max-w-2xl">
+      <div className="w-full max-w-full overflow-hidden ">
         <ImageSlider/>
+        </div>
         <div className="flex items-center font-medium justify-center text-lg mt-4 text-bg-MainColor">
           <h4>Edit Profile</h4> <Pencil className="ml-2" />
         </div>
 
-        <form className="mt-6 space-y-4 bg-white shadow-md rounded-lg p-9 w-full">
+        <form className="mt-6 space-y-4 bg-white shadow-md rounded-lg p-6 w-full">
 
           {/* Input Fields */}
           {[
-            { label: "First Name *", name: "firstName", type: "text" },
-            { label: "Last Name *", name: "lastName", type: "text" },
-            { label: "Phone *", name: "tel", type: "int", maxLength: 10, readOnly: true }, // ✅ ป้องกันการแก้ไข
-            { label: "Birthday *", name: "birthday", type: "date" },
-            { label: "ID Card / Passport No. *", name: "idCard", type: "int", maxLength: 13 },
-            { label: "Email *", name: "email", type: "email" },
-            { label: "Address *", name: "address", type: "textarea" }
-          ].map(({ label, name, type, maxLength, readOnly }) => (
+            { label: "First Name *",labelTH:"(ชื่อจริง)", name: "firstName", type: "text" },
+            { label: "Last Name *",labelTH:"(นามสกุล)", name: "lastName", type: "text" },
+            { label: "Phone *",labelTH:"(เบอร์โทร)", name: "tel", type: "int", maxLength: 10, readOnly: true }, // ✅ ป้องกันการแก้ไข
+            { label: "Birthday *",labelTH:"(วันเกิด)", name: "birthday", type: "date" },
+            { label: "ID Card / Passport No. *",labelTH:"(บัตรประชาชน/หนังสือเดินทาง)", name: "idCard", type: "int", maxLength: 13 },
+            { label: "Email *",labelTH:"(อีเมล์)", name: "email", type: "email" },
+            { label: "Address *",labelTH:"(ที่อยู่)", name: "address", type: "textarea" }
+          ].map(({ label,labelTH, name, type, maxLength, readOnly }) => (
             <div key={name}>
-              <label className="block text-lg text-bg-MainColor">{label}</label>
+              <div className="flex">
+              <label className="block text-sm text-bg-MainColor">{label}</label>
+              <label className="block text-xs text-gray-500 mt-1">{labelTH}</label>
+              </div>
               {type === "textarea" ? (
                 <textarea
                   name={name}
@@ -237,12 +242,15 @@ function EditProfile() {
 
           {/* Province, District, Sub-District */}
           {[
-            { label: "Province *", name: "province", options: thai_provinces },
-            { label: "District *", name: "district", options: thai_amphures.filter(d => d.province_id === formData.province?.value) },
-            { label: "Sub District *", name: "subDistrict", options: thai_tambons.filter(t => t.amphure_id === formData.district?.value) }
-          ].map(({ label, name, options }) => (
+            { label: "Province *",labelTH:"(จังหวัด)", name: "province", options: thai_provinces },
+            { label: "District *",labelTH:"(เขต)", name: "district", options: thai_amphures.filter(d => d.province_id === formData.province?.value) },
+            { label: "Sub District *",labelTH:"(ตำบล)", name: "subDistrict", options: thai_tambons.filter(t => t.amphure_id === formData.district?.value) }
+          ].map(({ label,labelTH, name, options }) => (
             <div key={name}>
-              <label className="block text-lg text-bg-MainColor ">{label}</label>
+              <div className="flex">
+              <label className="block text-sm text-bg-MainColor">{label}</label>
+              <label className="block text-xs text-gray-500 mt-1">{labelTH}</label>
+              </div>
               <Select
                 options={options.map(opt => ({ value: opt.id, label: opt.name_th }))}
                 value={formData[name]}
@@ -255,7 +263,10 @@ function EditProfile() {
 
           {/* Postal Code */}
           <div>
-            <label className="block text-lg text-bg-MainColor">Postal Code *</label>
+              <div className="flex">
+               <label className="block text-sm text-bg-MainColor">Postal Code *</label>
+               <label className=" text-xs text-gray-500 mt-1">(รหัสไปรษณี)</label>
+              </div>
             <input
               type="text"
               name="postal" // ✅ เพิ่ม name ให้ input

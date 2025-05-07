@@ -3,8 +3,6 @@ import { Phone } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import ImageSlider from "./ImageSlider";
 
-
-
 function ChangeNumber() {
   const navigate = useNavigate();
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -182,20 +180,24 @@ function ChangeNumber() {
 
 
   return (
-    <div className="bg-gray-100 min-h-screen flex flex-col justify-center items-center p-6">
-      <div className="mt-16 p-3 sm:mt-12 w-full max-w-2xl">
-        <ImageSlider/>
+    <div className="bg-gray-100 min-h-screen flex flex-col items-center ">
+      <div className="mt-20  w-full max-w-2xl ">
+       <div className="w-full max-w-full overflow-hidden ">
+         <ImageSlider/>
+        </div>
 
         <div className="flex items-center text-bg-MainColor font-medium justify-center text-lg mt-4">
           <h4>Change Number</h4>
           <Phone color="#D51F39" className="ml-2" />
         </div>
 
-        <div className="bg-white shadow-md rounded-lg p-6 w-full mt-6">
+        <div className="bg-white shadow-md rounded-lg p-6 w-full mt-6 ">
           <div className="mb-4">
-            <label className="block text-sm font-medium text-bg-MainColor mb-1">
-              Register Phone Number (เบอร์โทร) *
-            </label>
+            <div className="flex">
+              <label className="block text-sm text-bg-MainColor mb-1">Register Phone Number *</label>
+              <label className="block text-xs text-slate-500 mt-2">(เบอร์โทร)</label>
+            </div>
+            
             <input
               type="text"
               value={oldPhone || "Loading..."}
@@ -207,9 +209,10 @@ function ChangeNumber() {
           </div>
 
           <div className="mb-4">
-            <label className="block text-sm font-medium text-bg-MainColor mb-1">
-              New Phone Number (เบอร์โทรใหม่) *
-            </label>
+          <div className="flex">
+              <label className="block text-sm text-bg-MainColor mb-1">New Phone Number *</label>
+              <label className="block text-xs text-slate-500 mt-2">(เบอร์โทรใหม่)</label>
+            </div>
             <input
               type="text"
               placeholder="New Phone Number*"
